@@ -1,0 +1,2 @@
+dynamic token;
+dynamic teamCode;
