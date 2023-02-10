@@ -9,6 +9,7 @@ class AppCubit extends Cubit<AppStates> {
   AppCubit() : super(AppInitState());
   static AppCubit get(context) => BlocProvider.of(context);
   final supabase = Supabase.instance.client;
+  TabController tabController = TabController(length: 2,vsync: this);
 
   selectMultiSupa(
       {required String table,
@@ -29,7 +30,8 @@ class AppCubit extends Cubit<AppStates> {
   List<dynamic> upcomingTrain = [];
   List<dynamic> beforeTrain = [];
   void getTraining() async {
-    var l = await selectMultiSupa(table: "trainings", columns: "date,location");
+    var l = await selectMultiSupa(table: "trainings", columns: "");
+    print(l);
     l.forEach((element) {
       if (DateTime.parse(element['date']).isAfter(DateTime.now())) {
         upcomingTrain.add(element);

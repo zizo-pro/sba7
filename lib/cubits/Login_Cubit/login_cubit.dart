@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_print
 
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +13,7 @@ import 'package:sba7/screens/register_screen/complete_regestiration_screen.dart'
 import 'package:sba7/shared/components.dart';
 import 'package:sba7/shared/constants.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:sba7/shared/cache_helper.dart';
 
 class LoginCubit extends Cubit<LoginStates> {
   LoginCubit() : super(LoginInitState());
@@ -46,16 +49,17 @@ class LoginCubit extends Cubit<LoginStates> {
   }
 
   void userLogin({required email, required password, context}) {
-    
+    log(emails.toString());
     FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: password)
         .then((value) {
       emails.forEach((element) {
-        print(element['email']);
+        log(element['email']);
         print(email);
         if (email == element['email']) {
           print(element);
           if (element['isComplete'] == true) {
+            CacheHelper.saveData(key: "token", value: value.user!.uid);
             navigateAndFinish(context, const MyHomePage());
             emit(LoginSuccessState());
           } else {
@@ -63,6 +67,7 @@ class LoginCubit extends Cubit<LoginStates> {
                 context,
                 CompleteRegisterScreen(
                   userEmail: LoginText.text,
+                  uid: value.user!.uid,
                 ));
           }
         }
@@ -83,6 +88,12 @@ class LoginCubit extends Cubit<LoginStates> {
             email: emailReg.text, password: passwordReg.text)
         .then((value) async {
       uID = value.user!.uid;
+      navigateAndFinish(
+          context,
+          CompleteRegisterScreen(
+            userEmail: emailReg.text,
+            uid: value.user!.uid,
+          ));
       await userCreate(
           firstName: firstName.text,
           lastName: lastName.text,
@@ -148,13 +159,16 @@ class LoginCubit extends Cubit<LoginStates> {
     emit(RegisterDropDownChange());
   }
 
-  Future<void> updateReg({required userType, required uemail, context}) async {
+  Future<void> updateReg(
+      {required userType, required uemail, context, required uid}) async {
     print(uemail);
     var data = await Supabase.instance.client
         .from('users')
         .update({"isComplete": true, 'user_type': userType})
         .eq("email", uemail)
-        .then((value) => print("done"))
+        .then((value) {
+          CacheHelper.saveData(key: 'token', value: uid);
+        })
         .catchError((onError) {
           print(onError.toString());
         })

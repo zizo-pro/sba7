@@ -159,8 +159,7 @@ class RegisterScreen extends StatelessWidget {
                               onPressed: () {
                                 if (kay.currentState!.validate()) {
                                   cubit.userRegister(context: context);
-                                  navigateAndFinish(
-                                      context, CompleteRegisterScreen(userEmail: cubit.emailReg.text,));
+                                  
                                 }
                               },
                               child: const Text("Register")),

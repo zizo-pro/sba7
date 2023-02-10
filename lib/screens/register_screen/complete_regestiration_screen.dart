@@ -5,7 +5,8 @@ import 'package:sba7/cubits/Login_Cubit/login_states.dart';
 
 class CompleteRegisterScreen extends StatelessWidget {
   final String userEmail;
-  CompleteRegisterScreen({super.key, required this.userEmail});
+  final String uid;
+  CompleteRegisterScreen({super.key, required this.userEmail,required this.uid});
   final List<DropdownMenuItem> ites = const [
     DropdownMenuItem(
       value: 0,
@@ -65,7 +66,9 @@ class CompleteRegisterScreen extends StatelessWidget {
                               await cubit
                                   .updateReg(
                                       uemail: userEmail,
-                                      userType: texts[cubit.dropDownValue])
+                                      userType: texts[cubit.dropDownValue],
+                                      context: context,
+                                      uid: uid)
                                   .then((value) => print("done"))
                                   .catchError((onError) {
                                 print(onError.toString());

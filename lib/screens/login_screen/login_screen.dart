@@ -43,14 +43,11 @@ class LoginScreen extends StatelessWidget {
                   ),
                   TextButton(
                       onPressed: () {
-                        if (cubit.emails.contains(cubit.LoginText.text)) {
+
                           cubit.userLogin(
                               email: cubit.LoginText.text,
                               password: cubit.PasswordText.text,
                               context: context);
-                        } else {
-                          navigateTo(context, CompleteRegisterScreen(userEmail: cubit.LoginText.text));
-                        }
                       },
                       child: Text("Login")),
                   Row(

@@ -3,6 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:sba7/cubits/AppCubit/app_cubit.dart';
 import 'package:sba7/cubits/AppCubit/app_states.dart';
+import 'package:sba7/screens/login_screen/login_screen.dart';
+import 'package:sba7/screens/train_info_screen/train_info_screen.dart';
+import 'package:sba7/shared/cache_helper.dart';
+import 'package:sba7/shared/components.dart';
+import 'package:sba7/shared/constants.dart';
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
@@ -42,14 +47,32 @@ class MyHomePage extends StatelessWidget {
                     physics: const BouncingScrollPhysics(),
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
-                      child: ListView.separated(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) =>
-                              TrainingCard(item: cubit.beforeTrain[index]),
-                          separatorBuilder: (context, index) =>
-                              const SizedBox(height: 20),
-                          itemCount: cubit.beforeTrain.length),
+                      child: Column(
+                        children: [
+                          ListView.separated(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, index) =>
+                                  TrainingCard(item: cubit.beforeTrain[index],context: context),
+                              separatorBuilder: (context, index) =>
+                                  const SizedBox(height: 20),
+                              itemCount: cubit.beforeTrain.length),
+                          TextButton(
+                              onPressed: () {
+                                CacheHelper.removeData(
+                                  key: 'token',
+                                ).then((value) {
+                                  if (value) {
+                                    navigateAndFinish(
+                                      context,
+                                      const LoginScreen(),
+                                    );
+                                  }
+                                });
+                              },
+                              child: Text("Logout"))
+                        ],
+                      ),
                     ),
                   ),
                 ]),
@@ -79,26 +102,12 @@ class MyHomePage extends StatelessWidget {
   }
 }
 
-List<String> months = [
-  'JAN',
-  "FEB",
-  "MAR",
-  "APR",
-  "MAY",
-  "JUN",
-  "JUL",
-  "AUG",
-  "SEP",
-  "OCT",
-  "NOV",
-  "DEC"
-];
+
 Widget TrainingCard({context, required item, cubit}) {
   return InkWell(
     splashColor: Colors.grey,
     onTap: () {
-      cubit.test();
-      // navigateTo(context, TrainScreen());
+      navigateTo(context, TrainScreen(training: item,));
     },
     child: Container(
       padding: const EdgeInsets.all(8),
