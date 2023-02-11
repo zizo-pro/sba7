@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CacheHelper {
@@ -21,6 +23,10 @@ class CacheHelper {
     if (value is String) {
       return await sharedPreferences!.setString(key, value);
     }
+    if (value is Map) {
+      String map = json.encode(value);
+      return await sharedPreferences!.setString(key, map);
+    }
     if (value is int) {
       return await sharedPreferences!.setInt(key, value);
     }
@@ -29,10 +35,10 @@ class CacheHelper {
     }
     return await sharedPreferences!.setBool(key, value);
   }
-    static Future<bool> removeData({
+
+  static Future<bool> removeData({
     required String key,
   }) async {
     return await sharedPreferences!.remove(key);
   }
-
 }

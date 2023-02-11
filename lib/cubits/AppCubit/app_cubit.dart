@@ -1,15 +1,27 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:sba7/cubits/AppCubit/app_states.dart';
-import 'package:sba7/cubits/Login_Cubit/login_states.dart';
+import 'package:sba7/screens/profile_screen/profile_screen.dart';
+import 'package:sba7/screens/train_screen/train_screen.dart';
+import 'package:sba7/shared/cache_helper.dart';
+import 'package:sba7/shared/constants.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AppCubit extends Cubit<AppStates> {
   AppCubit() : super(AppInitState());
   static AppCubit get(context) => BlocProvider.of(context);
   final supabase = Supabase.instance.client;
-  TabController tabController = TabController(length: 2,vsync: this);
+  // TabController tabController = TabController(length: 2,vsync: this);
+
+  List screens = [const TrainScreen(), ProfileScreen()];
+  int currentIndex = 0;
+  void changeBottomNav({required int value}) {
+    currentIndex = value;
+    emit(AppChagneBottomNavBarState());
+  }
 
   selectMultiSupa(
       {required String table,
@@ -21,7 +33,6 @@ class AppCubit extends Cubit<AppStates> {
         .select(columns)
         .eq(filterCol, filterVal)
         .catchError((onError) {
-      print(onError.toString());
       emit(AppGetTrainingErrorState());
     });
     return lol;
@@ -31,7 +42,6 @@ class AppCubit extends Cubit<AppStates> {
   List<dynamic> beforeTrain = [];
   void getTraining() async {
     var l = await selectMultiSupa(table: "trainings", columns: "");
-    print(l);
     l.forEach((element) {
       if (DateTime.parse(element['date']).isAfter(DateTime.now())) {
         upcomingTrain.add(element);
@@ -42,11 +52,47 @@ class AppCubit extends Cubit<AppStates> {
     emit(AppGetTrainingSuccessState());
   }
 
-//   void test() {
-//     print(DateFormat("EEE").format(DateTime.now()));
-//     for (var i = 1; i < 100; i++) {
-//       print((DateFormat("EEE")
-//           .format(DateTime.now().add(Duration(days: 7 * i)))));
-//     }
-//   }
+  File? profileimage;
+  final picker = ImagePicker();
+
+  Future<void> getprofileImage() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      profileimage = File(pickedFile.path);
+      uploadProfileImage();
+      emit(AppProfileImagePickerSuccessState());
+    } else {
+      emit(AppProfileImagePickerErrorState());
+    }
+  }
+
+  void uploadProfileImage() {
+    emit(AppUploadProfilePhototLoadingState());
+    FirebaseStorage.instance
+        .ref()
+        .child(
+            'user_profiles/${Uri.file(profileimage!.path).pathSegments.last}')
+        .putFile(profileimage!)
+        .then((value) {
+      value.ref.getDownloadURL().then((value) {
+        supabase
+            .from('users')
+            .update({'profile_picture': value})
+            .eq("email", userData['email'])
+            .then((value) => getUserData(email: userData['email']));
+      }).catchError((onError) {
+        emit(AppUploadProfilePhototErrorState());
+      });
+      emit(AppUploadProfilePhototSuccessState());
+    }).catchError((onError) {
+      emit(AppUploadProfilePhototErrorState());
+    });
+  }
+
+  void getUserData({required email}) async {
+    var userDatal = await supabase.from("users").select().eq('email', email);
+    CacheHelper.saveData(key: "userData", value: userDatal[0]);
+    userData = userDatal[0];
+    emit(AppUpdateUserDataState());
+  }
 }

@@ -41,25 +41,34 @@ class LoginCubit extends Cubit<LoginStates> {
   }
 
   void getEmail() async {
-    List<dynamic> email =
-        await supabase.from("users").select('email,isComplete');
+    List<dynamic> email = await supabase.from("users").select();
     email.forEach((element) {
       emails.add(element);
     });
   }
 
+  void getUserData({required email}) async {
+    var userDatal = await supabase
+        .from("users")
+        .select()
+        .eq('email', email);
+    CacheHelper.saveData(key: "userData", value: userDatal[0]);
+    userData = userDatal[0];
+  }
+
   void userLogin({required email, required password, context}) {
-    log(emails.toString());
     FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: password)
         .then((value) {
       emails.forEach((element) {
-        log(element['email']);
-        print(email);
         if (email == element['email']) {
-          print(element);
           if (element['isComplete'] == true) {
             CacheHelper.saveData(key: "token", value: value.user!.uid);
+            CacheHelper.saveData(key: "userAuth", value: element['user_type']);
+            CacheHelper.saveData(key: "team_code", value: element['team_code']);
+            userAuth = element['user_type'];
+            teamCode = element['team_code'];
+            getUserData(email:email);
             navigateAndFinish(context, const MyHomePage());
             emit(LoginSuccessState());
           } else {
@@ -125,6 +134,8 @@ class LoginCubit extends Cubit<LoginStates> {
         email: email,
         phone: phone,
         uId: uId,
+        profilePic:
+            'https://firebasestorage.googleapis.com/v0/b/sba7-ed3fd.appspot.com/o/user_profiles%2Fdefault%2Fuser.png?alt=media&token=ed7c16f0-2765-48b3-ba8b-c21938d2d156',
         code: code);
     FirebaseFirestore.instance
         .collection('users')
@@ -139,7 +150,9 @@ class LoginCubit extends Cubit<LoginStates> {
           'phone': phone,
           'uid': uId,
           'team_code': code,
-          'isComplete': false
+          'isComplete': false,
+          'profilePic':
+              "https://firebasestorage.googleapis.com/v0/b/sba7-ed3fd.appspot.com/o/user_profiles%2Fdefault%2Fuser.png?alt=media&token=ed7c16f0-2765-48b3-ba8b-c21938d2d156"
         }
       ]).then((value) {
         token = uId;
@@ -172,8 +185,11 @@ class LoginCubit extends Cubit<LoginStates> {
         .catchError((onError) {
           print(onError.toString());
         })
-        .then((value) => navigateAndFinish(context, MyHomePage()));
-
-    //
+        .then((value) {
+          userAuth = userType;
+          getUserData(email: uemail);
+          CacheHelper.saveData(key: "userAuth", value: userType);
+          navigateAndFinish(context, MyHomePage());
+        });
   }
 }

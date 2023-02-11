@@ -1,4 +1,6 @@
 // import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sba7/cubits/AppCubit/app_cubit.dart';
@@ -28,6 +30,11 @@ void main() async {
 
   Widget widget;
   token = CacheHelper.getData(key: 'token');
+  teamCode = CacheHelper.getData(key: 'team_code');
+  userAuth = CacheHelper.getData(key: 'userAuth');
+  String userdal = CacheHelper.getData(key: 'userData');
+  userData = json.decode(userdal);
+  print(userData.runtimeType);
   if (token != null) {
     widget = const MyHomePage();
   } else {
@@ -41,7 +48,7 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   final Widget? startWidget;
-  MyApp({super.key,this.startWidget});
+  MyApp({super.key, this.startWidget});
 
   // This widget is the root of your application.
   @override
@@ -54,7 +61,7 @@ class MyApp extends StatelessWidget {
               ..getEmail(),
           ),
           BlocProvider(
-            create: (context) => AppCubit()..getTraining(),
+            create: (context) => AppCubit()..getTraining()..getUserData(email: userData['email']),
           )
         ],
         child: BlocConsumer<LoginCubit, LoginStates>(

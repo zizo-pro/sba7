@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sba7/shared/constants.dart';
 
-class TrainScreen extends StatelessWidget {
+class TrainInfoScreen extends StatefulWidget {
   final training;
-  const TrainScreen({super.key, required this.training});
+  const TrainInfoScreen({super.key, required this.training});
 
+  @override
+  State<TrainInfoScreen> createState() => _TrainInfoScreenState();
+}
+
+class _TrainInfoScreenState extends State<TrainInfoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,7 +22,8 @@ class TrainScreen extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 28,
-                child: Text(DateTime.parse(training['date']).day.toString(),
+                child: Text(
+                    DateTime.parse(widget.training['date']).day.toString(),
                     style:
                         TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
               ),
@@ -28,36 +34,38 @@ class TrainScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    months[DateTime.parse(training['date']).month - 1],
+                    months[DateTime.parse(widget.training['date']).month - 1],
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
                   ),
-                  Text(DateTime.parse(training['date']).year.toString(),
+                  Text(DateTime.parse(widget.training['date']).year.toString(),
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.w400))
                 ],
               ),
               Spacer(),
               Text(
-                DateFormat("h:mm a").format(DateTime.parse(training['date'])),
+                DateFormat("h:mm a")
+                    .format(DateTime.parse(widget.training['date'])),
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
             ],
           ),
-          DefaultTabController(
-              length: 2,
-              child: TabBar(
-                tabs: [
-                  Tab(
-                    icon: Icon(Icons.people),
-                    text: "Attendance",
-                  ),
-                  Tab(
-                    icon: Icon(Icons.people),
-                    text: "Attendance",
-                  ),
-                ],
-              )),
-          TabBarView(controller: ,children: [Text("ziad"), Text("ebrahim")])
+          // Container(
+          //   child: TabBar(
+          //       unselectedLabelColor: Colors.red,
+          //       labelColor: Colors.blue,
+          //       dividerColor: Colors.green,
+          //       indicatorColor: Colors.amber,
+          //       tabs: [
+          //         Tab(
+          //           text: "Attendance",
+          //         ),
+          //         Tab(
+          //           text: "lol",
+          //         )
+          //       ]),
+          // )
+          // TabBarView(controller: ,children: [Text("ziad"), Text("ebrahim")])
         ]),
       ),
     );

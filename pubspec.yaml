@@ -40,6 +40,8 @@ dependencies:
   conditional_builder_null_safety: ^0.0.6
   bloc: ^8.1.0
   flutter_bloc: ^8.1.0
+  image_picker: ^0.8.6+1
+  cached_network_image: ^3.2.3
   intl: ^0.17.0
 
 
@@ -47,6 +49,7 @@ dependencies:
 
   firebase_auth: ^4.2.5
   cloud_firestore: ^4.3.1
+  firebase_storage: ^11.0.11
   shared_preferences: ^2.0.17
 
 dev_dependencies:
