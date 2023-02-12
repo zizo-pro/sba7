@@ -5,6 +5,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:sba7/cubits/Login_Cubit/login_states.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sba7/layout/home_layout.dart';
@@ -30,6 +31,7 @@ class LoginCubit extends Cubit<LoginStates> {
   TextEditingController confirmPassReg = TextEditingController();
   TextEditingController phoneReg = TextEditingController();
   TextEditingController teamCodeReg = TextEditingController();
+  DateTime birthDate = DateTime(1980, 1, 1);
   List<String> teamCodes = [];
   List<Map<String, dynamic>> emails = [];
 
@@ -48,10 +50,7 @@ class LoginCubit extends Cubit<LoginStates> {
   }
 
   void getUserData({required email}) async {
-    var userDatal = await supabase
-        .from("users")
-        .select()
-        .eq('email', email);
+    var userDatal = await supabase.from("users").select().eq('email', email);
     CacheHelper.saveData(key: "userData", value: userDatal[0]);
     userData = userDatal[0];
   }
@@ -68,7 +67,7 @@ class LoginCubit extends Cubit<LoginStates> {
             CacheHelper.saveData(key: "team_code", value: element['team_code']);
             userAuth = element['user_type'];
             teamCode = element['team_code'];
-            getUserData(email:email);
+            getUserData(email: email);
             navigateAndFinish(context, const MyHomePage());
             emit(LoginSuccessState());
           } else {
@@ -151,7 +150,7 @@ class LoginCubit extends Cubit<LoginStates> {
           'uid': uId,
           'team_code': code,
           'isComplete': false,
-          'profilePic':
+          'profile_picture':
               "https://firebasestorage.googleapis.com/v0/b/sba7-ed3fd.appspot.com/o/user_profiles%2Fdefault%2Fuser.png?alt=media&token=ed7c16f0-2765-48b3-ba8b-c21938d2d156"
         }
       ]).then((value) {
@@ -159,6 +158,7 @@ class LoginCubit extends Cubit<LoginStates> {
         teamCode = code;
         navigateAndFinish(context, MyHomePage());
         emit(CreateUserSuccessState());
+        log("created user succ");
       }).catchError((onError) => print(onError.toString()));
     }).catchError((onError) {
       print(onError.toString());
@@ -173,11 +173,19 @@ class LoginCubit extends Cubit<LoginStates> {
   }
 
   Future<void> updateReg(
-      {required userType, required uemail, context, required uid}) async {
+      {required userType,
+      required uemail,
+      context,
+      required uid,
+      required DateTime birthDate}) async {
     print(uemail);
     var data = await Supabase.instance.client
         .from('users')
-        .update({"isComplete": true, 'user_type': userType})
+        .update({
+          "isComplete": true,
+          'user_type': userType,
+          'birth_date': DateFormat('yyyy-MM-dd').format(birthDate)
+        })
         .eq("email", uemail)
         .then((value) {
           CacheHelper.saveData(key: 'token', value: uid);

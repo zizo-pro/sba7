@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:sba7/screens/attendance_screen/attendance_screen.dart';
+import 'package:sba7/shared/components.dart';
 import 'package:sba7/shared/constants.dart';
 
 class TrainInfoScreen extends StatefulWidget {
@@ -50,6 +52,20 @@ class _TrainInfoScreenState extends State<TrainInfoScreen> {
               ),
             ],
           ),
+          const SizedBox(
+            height: 20,
+          ),
+          Container(
+            width: double.infinity,
+            height: 40,
+            child: ElevatedButton.icon(
+                onPressed: () {
+                  navigateTo(context, const AttendanceScreeen());
+                },
+                icon: const Icon(Icons.people),
+                label: const Text("Attendance")),
+          ),
+
           // Container(
           //   child: TabBar(
           //       unselectedLabelColor: Colors.red,

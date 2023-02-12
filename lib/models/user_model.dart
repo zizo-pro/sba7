@@ -6,12 +6,14 @@ class UserModel {
   String? uId;
   String? code;
   String? userType;
+  String? birthDate;
   String? profilePic;
 
   UserModel(
       {this.firstName,
       this.lastName,
       this.email,
+      this.birthDate,
       this.phone,
       this.code,
       this.uId,
@@ -25,6 +27,7 @@ class UserModel {
     phone = json['phone'];
     code = json['code'];
     uId = json['uId'];
+    birthDate = json['birthDate'];
     userType = json['userType'];
     profilePic = json['profilePic'];
   }
@@ -37,6 +40,7 @@ class UserModel {
       'code': code,
       'uId': uId,
       'userType': userType,
+      'birthDate': birthDate,
       'profilePic': profilePic,
     };
   }
