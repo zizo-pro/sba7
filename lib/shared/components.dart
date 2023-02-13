@@ -1,6 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:sba7/cubits/AppCubit/app_cubit.dart';
+import 'package:sba7/cubits/AppCubit/app_states.dart';
 import 'package:sba7/screens/login_screen/login_screen.dart';
 import 'package:sba7/screens/train_info_screen/train_info_screen.dart';
 import 'package:sba7/shared/cache_helper.dart';
@@ -47,17 +50,18 @@ Widget textfield({
       onFieldSubmitted: onSubmit,
       onChanged: onChange,
       decoration: InputDecoration(
-        labelStyle: TextStyle(color: Colors.black),
+        labelStyle: const TextStyle(color: Colors.black),
         labelText: label,
         border: const OutlineInputBorder(),
         prefixIcon: Icon(prefix),
       ),
     );
 
-Widget TrainingCard({context, required item, cubit}) {
+Widget trainingCard({context, required item, cubit}) {
   return InkWell(
     splashColor: Colors.grey,
     onTap: () {
+      cubit.testio(trainingID:item['id']);
       navigateTo(
           context,
           TrainInfoScreen(
@@ -93,7 +97,7 @@ Widget TrainingCard({context, required item, cubit}) {
                   style: const TextStyle(
                       fontWeight: FontWeight.w900, fontSize: 28),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 4,
                 ),
                 Text(
@@ -133,66 +137,99 @@ Widget TrainingCard({context, required item, cubit}) {
           ],
         ),
         const Spacer(),
-        IconButton(
-            onPressed: () {
-              print("lol");
-            },
-            icon: const Icon(Icons.arrow_forward_ios))
-        // MaterialButton(onPressed: () {})
+        const Icon(Icons.arrow_forward_ios)
       ]),
     ),
   );
 }
 
-Widget userAttendanceCard() {
-  return Container(
-    padding: const EdgeInsets.all(8),
-    height: 80,
-    width: double.infinity,
-    decoration: BoxDecoration(
-      boxShadow: [
-        BoxShadow(
-          color: Colors.grey[400] as Color,
-          blurStyle: BlurStyle.outer,
-          spreadRadius: 0.6,
-          blurRadius: 7,
-        )
-      ],
-    ),
-    child: Padding(
-      padding: const EdgeInsets.all(8),
-      child: Row(children: [
-        CircleAvatar(
-            radius: 25,
-            child: CachedNetworkImage(
-              imageUrl:
-                  "https://firebasestorage.googleapis.com/v0/b/sba7-ed3fd.appspot.com/o/user_profiles%2Fdefault%2Fuser.png?alt=media&token=ed7c16f0-2765-48b3-ba8b-c21938d2d156",
-            )),
-        const SizedBox(width: 10),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "Ziad Ahmed",
-              style: TextStyle(fontSize: 16),
-            ),
-            Text(
-              "2005",
-              style: TextStyle(color: Colors.grey[500]),
-            ),
-          ],
-        ),
-        const Spacer(),
-        IconButton(
-          icon: Icon(Icons.check),
-          onPressed: () {},
-        ),
-        IconButton(
-          icon: Icon(Icons.close),
-          onPressed: () {},
-        ),
-      ]),
-    ),
-  );
+Widget userAttendanceCard({required swimmerData, required context}) {
+  Color? wrongColor = Colors.grey;
+  Color? rightColor = Colors.grey;
+  AppCubit.get(context).attendance = {};
+  return BlocConsumer<AppCubit, AppStates>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        var cubit = AppCubit.get(context);
+        return Container(
+          padding: const EdgeInsets.all(8),
+          height: 80,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey[400] as Color,
+                blurStyle: BlurStyle.outer,
+                spreadRadius: 0.6,
+                blurRadius: 7,
+              )
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(6),
+            child: Row(children: [
+              CircleAvatar(
+                  radius: 27,
+                  child: ClipOval(
+                    child: SizedBox.fromSize(
+                      size: const Size.fromRadius(80),
+                      child: CachedNetworkImage(
+                        imageUrl: swimmerData['profile_picture'],
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  )),
+              const SizedBox(width: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    toBeginningOfSentenceCase(
+                            swimmerData["full_name"].toString())
+                        .toString(),
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  Text(
+                    DateTime.parse(swimmerData['birth_date']).year.toString(),
+                    style: TextStyle(color: Colors.grey[500]),
+                  ),
+                ],
+              ),
+              const Spacer(),
+              CircleAvatar(
+                radius: 16,
+                backgroundColor: rightColor,
+                child: IconButton(
+                  iconSize: 16,
+                  color: Colors.white,
+                  icon: const Icon(Icons.check),
+                  onPressed: () {
+                    rightColor = Colors.green[600];
+                    wrongColor = Colors.grey;
+                    cubit.attendanceMap(
+                        userID: swimmerData['uid'], attented: true);
+                  },
+                ),
+              ),
+              const SizedBox(width: 10),
+              CircleAvatar(
+                radius: 16,
+                backgroundColor: wrongColor,
+                child: IconButton(
+                  iconSize: 16,
+                  color: Colors.white,
+                  icon: const Icon(Icons.close),
+                  onPressed: () {
+                    rightColor = Colors.grey;
+                    wrongColor = Colors.red;
+                    cubit.attendanceMap(
+                        userID: swimmerData['uid'], attented: false);
+                  },
+                ),
+              ),
+            ]),
+          ),
+        );
+      });
 }

@@ -2,6 +2,7 @@ dynamic token;
 dynamic teamCode;
 dynamic userAuth;
 dynamic userData;
+dynamic swimmers;
 
 const List<String> months = [
   'JAN',

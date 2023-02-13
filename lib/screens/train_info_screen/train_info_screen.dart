@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:sba7/cubits/AppCubit/app_cubit.dart';
 import 'package:sba7/screens/attendance_screen/attendance_screen.dart';
 import 'package:sba7/shared/components.dart';
 import 'package:sba7/shared/constants.dart';
@@ -18,7 +19,7 @@ class _TrainInfoScreenState extends State<TrainInfoScreen> {
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(children: [
           Row(
             children: [
@@ -26,8 +27,8 @@ class _TrainInfoScreenState extends State<TrainInfoScreen> {
                 radius: 28,
                 child: Text(
                     DateTime.parse(widget.training['date']).day.toString(),
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.w500)),
               ),
               const SizedBox(
                 width: 5,
@@ -60,7 +61,8 @@ class _TrainInfoScreenState extends State<TrainInfoScreen> {
             height: 40,
             child: ElevatedButton.icon(
                 onPressed: () {
-                  navigateTo(context, const AttendanceScreeen());
+                  AppCubit.get(context).testio(trainingID: widget.training['id']);
+                  navigateTo(context, AttendanceScreeen(trainingID: widget.training['id'],isAttendance: AppCubit.get(context).checkAttendance,));
                 },
                 icon: const Icon(Icons.people),
                 label: const Text("Attendance")),

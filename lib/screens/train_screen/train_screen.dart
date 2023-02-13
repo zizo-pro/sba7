@@ -36,7 +36,7 @@ class TrainScreen extends StatelessWidget {
                       child: ListView.separated(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) => TrainingCard(
+                          itemBuilder: (context, index) => trainingCard(
                               item: cubit.upcomingTrain[index], cubit: cubit),
                           separatorBuilder: (context, index) =>
                               const SizedBox(height: 20),
@@ -52,9 +52,9 @@ class TrainScreen extends StatelessWidget {
                           ListView.separated(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
-                              itemBuilder: (context, index) => TrainingCard(
+                              itemBuilder: (context, index) => trainingCard(
                                   item: cubit.beforeTrain[index],
-                                  context: context),
+                                  context: context,cubit: cubit),
                               separatorBuilder: (context, index) =>
                                   const SizedBox(height: 20),
                               itemCount: cubit.beforeTrain.length),

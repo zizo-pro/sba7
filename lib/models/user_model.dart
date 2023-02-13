@@ -1,6 +1,5 @@
 class UserModel {
-  String? firstName;
-  String? lastName;
+  String? fullName;
   String? email;
   String? phone;
   String? uId;
@@ -10,8 +9,7 @@ class UserModel {
   String? profilePic;
 
   UserModel(
-      {this.firstName,
-      this.lastName,
+      {this.fullName,
       this.email,
       this.birthDate,
       this.phone,
@@ -22,8 +20,7 @@ class UserModel {
 
   UserModel.fromJson(Map<String, dynamic>? json) {
     email = json!['email'];
-    firstName = json['firstName'];
-    lastName = json['lastName'];
+    fullName = json['fullName'];
     phone = json['phone'];
     code = json['code'];
     uId = json['uId'];
@@ -34,8 +31,7 @@ class UserModel {
   Map<String, dynamic> toMap() {
     return {
       'email': email,
-      'firstName': firstName,
-      'lastName': lastName,
+      'fullName': fullName,
       'phone': phone,
       'code': code,
       'uId': uId,

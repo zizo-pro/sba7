@@ -1,6 +1,8 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sba7/cubits/AppCubit/app_states.dart';
@@ -94,5 +96,58 @@ class AppCubit extends Cubit<AppStates> {
     CacheHelper.saveData(key: "userData", value: userDatal[0]);
     userData = userDatal[0];
     emit(AppUpdateUserDataState());
+  }
+
+// Attendance area
+  Color? wrongColor = Colors.grey;
+  Color? rightColor = Colors.grey;
+
+  void getSwimmers() async {
+    var swims =
+        await supabase.from('users').select().eq('user_type', "Swimmer");
+    swimmers = swims;
+  }
+
+  Map attendance = {};
+  void attendanceMap({required userID, required attented}) {
+    attendance[userID] = attented;
+    emit(AppAttendanceChangeBool());
+  }
+
+  bool checkAttendance = false;
+
+  void testio({required trainingID}) {
+    supabase
+        .from("attendance")
+        .select()
+        .eq("training_id", trainingID)
+        .catchError((onError) {
+      print(onError.toString());
+    }).then((value) {
+      print(value);
+      if (value.isEmpty) {
+        checkAttendance = false;
+      } else {
+        checkAttendance = true;
+      }
+      log(checkAttendance.toString());
+    });
+  }
+
+  void submitAttenddance({required trainingID}) {
+    if (attendance.length == swimmers.length) {
+      attendance.forEach((key, value) {
+        supabase
+            .from('attendance')
+            .insert(
+                {"user_id": key, "training_id": trainingID, "attended": value})
+            .then((value) {})
+            .catchError((onError) {
+              log(onError.toString());
+            });
+      });
+    } else {
+      log("false");
+    }
   }
 }

@@ -49,7 +49,7 @@ class ProfileScreen extends StatelessWidget {
                                 radius: 38,
                                 child: ClipOval(
                                   child: SizedBox.fromSize(
-                                    size: Size.fromRadius(48),
+                                    size: const Size.fromRadius(48),
                                     child: CachedNetworkImage(
                                       imageUrl: userData['profile_picture'],
                                       placeholder: (context, url) =>
@@ -59,7 +59,7 @@ class ProfileScreen extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              Icon(
+                              const Icon(
                                 Icons.edit,
                                 size: 20,
                               )
@@ -76,7 +76,7 @@ class ProfileScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "${toBeginningOfSentenceCase(userData['first_name'])} ${toBeginningOfSentenceCase(userData['last_name'])}",
+                          "${toBeginningOfSentenceCase(userData['full_name'])}",
                           style: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.w600),
                         ),

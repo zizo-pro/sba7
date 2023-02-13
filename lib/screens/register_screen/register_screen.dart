@@ -27,33 +27,16 @@ class RegisterScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           textfield(
-                            controller: cubit.firstName,
+                            controller: cubit.fullName,
                             type: TextInputType.name,
                             label: "First Name",
                             prefix: Icons.person,
                             obscure: false,
                             validate: (value) {
-                              if (cubit.firstName.text.isNotEmpty) {
+                              if (cubit.fullName.text.isNotEmpty) {
                                 return null;
                               } else {
                                 return "Please Enter your name";
-                              }
-                            },
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          textfield(
-                            controller: cubit.lastName,
-                            type: TextInputType.name,
-                            label: "Last Name",
-                            prefix: Icons.person,
-                            obscure: false,
-                            validate: (value) {
-                              if (cubit.lastName.text.isNotEmpty) {
-                                return null;
-                              } else {
-                                return "Please Enter your last name";
                               }
                             },
                           ),

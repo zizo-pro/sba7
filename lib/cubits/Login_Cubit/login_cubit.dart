@@ -24,8 +24,7 @@ class LoginCubit extends Cubit<LoginStates> {
   TextEditingController LoginText = TextEditingController();
   TextEditingController PasswordText = TextEditingController();
 
-  TextEditingController firstName = TextEditingController();
-  TextEditingController lastName = TextEditingController();
+  TextEditingController fullName = TextEditingController();
   TextEditingController emailReg = TextEditingController();
   TextEditingController passwordReg = TextEditingController();
   TextEditingController confirmPassReg = TextEditingController();
@@ -103,8 +102,7 @@ class LoginCubit extends Cubit<LoginStates> {
             uid: value.user!.uid,
           ));
       await userCreate(
-          firstName: firstName.text,
-          lastName: lastName.text,
+          fullName: fullName.text,
           email: emailReg.text,
           phone: phoneReg.text,
           uId: uID,
@@ -118,8 +116,7 @@ class LoginCubit extends Cubit<LoginStates> {
   }
 
   Future<void> userCreate({
-    required firstName,
-    required lastName,
+    required fullName,
     required email,
     required phone,
     required uId,
@@ -128,8 +125,7 @@ class LoginCubit extends Cubit<LoginStates> {
   }) async {
     emit(CreateUserLoadingState());
     UserModel model = UserModel(
-        firstName: firstName,
-        lastName: lastName,
+        fullName: fullName,
         email: email,
         phone: phone,
         uId: uId,
@@ -143,8 +139,7 @@ class LoginCubit extends Cubit<LoginStates> {
         .then((value) async {
       await Supabase.instance.client.from('users').insert([
         {
-          'first_name': firstName,
-          'last_name': lastName,
+          'full_name': fullName,
           'email': email,
           'phone': phone,
           'uid': uId,

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -14,6 +16,10 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (userData['user_type'] != "Swimmer") {
+      AppCubit.get(context).getSwimmers();
+
+    }
     return BlocConsumer<AppCubit, AppStates>(
       listener: (context, state) {},
       builder: (context, state) {

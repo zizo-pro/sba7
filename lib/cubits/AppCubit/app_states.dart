@@ -15,3 +15,5 @@ class AppUpdateUserDataState extends AppStates{}
 class AppUploadProfilePhototLoadingState extends AppStates{}
 class AppUploadProfilePhototErrorState extends AppStates{}
 class AppUploadProfilePhototSuccessState extends AppStates{}
+
+class AppAttendanceChangeBool extends AppStates{}
