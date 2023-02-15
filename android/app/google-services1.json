@@ -14,15 +14,7 @@
       },
       "oauth_client": [
         {
-          "client_id": "952844103852-f3n64s2sbkckqhijh61014vdvf9gjbvk.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.sba7",
-            "certificate_hash": "8e9aeba56c7b861a0b9f238d2574edb7c61bdf71"
-          }
-        },
-        {
-          "client_id": "952844103852-9ajbkhf5hin27cfnrv6i3ueo6v8amvm9.apps.googleusercontent.com",
+          "client_id": "952844103852-51t4eag2bfl2p2er1pdmbjb0qme7evp4.apps.googleusercontent.com",
           "client_type": 3
         }
       ],

@@ -1,11 +1,8 @@
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sba7/cubits/AppCubit/app_cubit.dart';
-import 'package:sba7/cubits/AppCubit/app_states.dart';
 import 'package:sba7/shared/components.dart';
 import 'package:sba7/shared/constants.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AttendanceScreeen extends StatelessWidget {
   final String trainingID;
@@ -41,7 +38,7 @@ class AttendanceScreeen extends StatelessWidget {
                       itemBuilder: (context, index) => userAttendanceCard(
                           swimmerData: swimmers[index], context: context),
                       separatorBuilder: (context, index) =>
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                       itemCount: swimmers.length)
                 ],
               ),
@@ -50,7 +47,31 @@ class AttendanceScreeen extends StatelessWidget {
         ),
       ),
       builder: (context) {
-        return Scaffold();
+        return SafeArea(
+          child: Scaffold(
+            body: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) => alreadyAttendance(
+                            swimmerData:
+                                AppCubit.get(context).ifAttendance[index]),
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(height: 10),
+                        itemCount: AppCubit.get(context).ifAttendance.length)
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
       },
     );
   }

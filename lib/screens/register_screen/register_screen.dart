@@ -1,8 +1,9 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sba7/cubits/Login_Cubit/login_cubit.dart';
 import 'package:sba7/cubits/Login_Cubit/login_states.dart';
-import 'package:sba7/screens/register_screen/complete_regestiration_screen.dart';
 import 'package:sba7/shared/components.dart';
 
 // @Zizo2412@!
@@ -29,7 +30,7 @@ class RegisterScreen extends StatelessWidget {
                           textfield(
                             controller: cubit.fullName,
                             type: TextInputType.name,
-                            label: "First Name",
+                            label: "Full Name",
                             prefix: Icons.person,
                             obscure: false,
                             validate: (value) {
@@ -78,6 +79,7 @@ class RegisterScreen extends StatelessWidget {
                                   cubit.confirmPassReg.text) {
                                 return "Please confirm your password";
                               }
+                              return null;
                             },
                           ),
                           const SizedBox(
@@ -100,44 +102,13 @@ class RegisterScreen extends StatelessWidget {
                                   cubit.confirmPassReg.text) {
                                 return "Please confirm your password";
                               }
+                              return null;
                             },
                           ),
                           const SizedBox(
                             height: 10,
                           ),
-                          textfield(
-                              controller: cubit.phoneReg,
-                              type: TextInputType.phone,
-                              label: "Phone Number",
-                              prefix: Icons.phone,
-                              obscure: false,
-                              validate: (value) {
-                                if (cubit.phoneReg.text.isNotEmpty) {
-                                  return null;
-                                } else {
-                                  return 'Please enter a valid phone number';
-                                }
-                              }),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          textfield(
-                              controller: cubit.teamCodeReg,
-                              type: TextInputType.phone,
-                              label: "Team Code",
-                              prefix: Icons.people,
-                              obscure: false,
-                              validate: (value) {
-                                if (cubit.teamCodes
-                                    .contains(cubit.teamCodeReg.text)) {
-                                  return null;
-                                } else {
-                                  return "Please enter a valid team code";
-                                }
-                              }),
-                          const SizedBox(
-                            height: 15,
-                          ),
+                        
                           TextButton(
                               onPressed: () {
                                 if (kay.currentState!.validate()) {

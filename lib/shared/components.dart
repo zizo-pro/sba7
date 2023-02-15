@@ -7,6 +7,7 @@ import 'package:sba7/cubits/AppCubit/app_states.dart';
 import 'package:sba7/screens/login_screen/login_screen.dart';
 import 'package:sba7/screens/train_info_screen/train_info_screen.dart';
 import 'package:sba7/shared/cache_helper.dart';
+import 'package:restart_app/restart_app.dart';
 import 'package:sba7/shared/constants.dart';
 
 void navigateTo(context, dynamic screen) =>
@@ -18,17 +19,27 @@ void navigateAndFinish(context, dynamic screen) => Navigator.pushAndRemoveUntil(
     });
 
 void logOut({required context}) {
+  userData = null;
+  token = null;
+  userAuth = null;
+  swimmers = null;
+  token = null;
   CacheHelper.removeData(key: "team_code");
   CacheHelper.removeData(key: 'userAuth');
+  CacheHelper.removeData(key: 'userData');
   CacheHelper.removeData(
     key: 'token',
   ).then((value) {
-    if (value) {
-      navigateAndFinish(
-        context,
-        const LoginScreen(),
-      );
-    }
+    userData = null;
+    token = null;
+    userAuth = null;
+    swimmers = null;
+    token = null;
+    navigateAndFinish(
+      context,
+      const LoginScreen(),
+    );
+    Restart.restartApp();
   });
 }
 
@@ -61,7 +72,7 @@ Widget trainingCard({context, required item, cubit}) {
   return InkWell(
     splashColor: Colors.grey,
     onTap: () {
-      cubit.testio(trainingID:item['id']);
+      cubit.testio(trainingID: item['id']);
       navigateTo(
           context,
           TrainInfoScreen(
@@ -139,6 +150,80 @@ Widget trainingCard({context, required item, cubit}) {
         const Spacer(),
         const Icon(Icons.arrow_forward_ios)
       ]),
+    ),
+  );
+}
+
+Widget alreadyAttendance({required swimmerData}) {
+  Color? iconColor;
+  IconData? icon;
+  if (swimmerData['attended']) {
+    iconColor = Colors.green;
+    icon = Icons.check;
+  } else {
+    iconColor = Colors.red;
+    icon = Icons.close;
+  }
+  return Container(
+    padding: const EdgeInsets.all(8),
+    height: 80,
+    width: double.infinity,
+    decoration: BoxDecoration(
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey[400] as Color,
+          blurStyle: BlurStyle.outer,
+          spreadRadius: 0.6,
+          blurRadius: 7,
+        )
+      ],
+    ),
+    child: Padding(
+      padding: const EdgeInsets.all(6),
+      child: Row(
+        children: [
+          CircleAvatar(
+              radius: 27,
+              child: ClipOval(
+                child: SizedBox.fromSize(
+                  size: const Size.fromRadius(80),
+                  child: CachedNetworkImage(
+                    imageUrl: swimmerData['users']['profile_picture'],
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              )),
+          const SizedBox(width: 10),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                toBeginningOfSentenceCase(
+                        swimmerData['users']["full_name"].toString())
+                    .toString(),
+                style: const TextStyle(fontSize: 16),
+              ),
+              Text(
+                DateTime.parse(swimmerData['users']['birth_date'])
+                    .year
+                    .toString(),
+                style: TextStyle(color: Colors.grey[500]),
+              ),
+            ],
+          ),
+          const Spacer(),
+          CircleAvatar(
+            radius: 16,
+            backgroundColor: iconColor,
+            child: Icon(
+              icon,
+              size: 16,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
     ),
   );
 }

@@ -2,7 +2,6 @@ import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:sba7/cubits/Login_Cubit/login_cubit.dart";
 import "package:sba7/cubits/Login_Cubit/login_states.dart";
-import "package:sba7/screens/register_screen/complete_regestiration_screen.dart";
 import "package:sba7/screens/register_screen/register_screen.dart";
 import "package:sba7/shared/components.dart";
 
@@ -24,7 +23,7 @@ class LoginScreen extends StatelessWidget {
                 children: [
                   // Icon(Icons.)
                   textfield(
-                      controller: cubit.LoginText,
+                      controller: cubit.loginText,
                       type: TextInputType.emailAddress,
                       label: 'Email',
                       obscure: false,
@@ -34,7 +33,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                   textfield(
                       obscure: true,
-                      controller: cubit.PasswordText,
+                      controller: cubit.passwordText,
                       type: TextInputType.visiblePassword,
                       label: 'Password',
                       prefix: Icons.lock),
@@ -43,13 +42,17 @@ class LoginScreen extends StatelessWidget {
                   ),
                   TextButton(
                       onPressed: () {
-
-                          cubit.userLogin(
-                              email: cubit.LoginText.text,
-                              password: cubit.PasswordText.text,
-                              context: context);
+                        cubit.userLogin(
+                            email: cubit.loginText.text,
+                            password: cubit.passwordText.text,
+                            context: context);
                       },
-                      child: Text("Login")),
+                      child: const Text("Login")),
+                  TextButton(
+                      onPressed: () {
+                        cubit.tt(context);
+                      },
+                      child: Text("Sign in with Google")),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

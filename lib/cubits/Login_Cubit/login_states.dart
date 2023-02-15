@@ -14,3 +14,5 @@ class CreateUserSuccessState extends LoginStates{}
 class UserRegisterLoadingState extends LoginStates{}
 class UserRegisterSuccessState extends LoginStates{}
 class UserRegisterErrorState extends LoginStates{}
+
+class GetUserDataSuccessState extends LoginStates{}

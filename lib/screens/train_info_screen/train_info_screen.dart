@@ -1,3 +1,4 @@
+// ignore_for_file: prefer_typing_uninitialized_variables
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sba7/cubits/AppCubit/app_cubit.dart';
@@ -38,31 +39,43 @@ class _TrainInfoScreenState extends State<TrainInfoScreen> {
                 children: [
                   Text(
                     months[DateTime.parse(widget.training['date']).month - 1],
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.w400),
                   ),
                   Text(DateTime.parse(widget.training['date']).year.toString(),
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w400))
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w400))
                 ],
               ),
-              Spacer(),
+              const Spacer(),
               Text(
                 DateFormat("h:mm a")
                     .format(DateTime.parse(widget.training['date'])),
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
             ],
           ),
           const SizedBox(
             height: 20,
           ),
-          Container(
+          SizedBox(
             width: double.infinity,
             height: 40,
             child: ElevatedButton.icon(
                 onPressed: () {
-                  AppCubit.get(context).testio(trainingID: widget.training['id']);
-                  navigateTo(context, AttendanceScreeen(trainingID: widget.training['id'],isAttendance: AppCubit.get(context).checkAttendance,));
+                  AppCubit.get(context)
+                      .testio(trainingID: widget.training['id']);
+                  if (userData['user_type'] == "Coach" || userData['user_type'] == 'Assistant') {
+                    navigateTo(
+                        context,
+                        AttendanceScreeen(
+                          trainingID: widget.training['id'],
+                          isAttendance: AppCubit.get(context).checkAttendance,
+                        ));
+                  } else {
+                    print("You're not Authorized");
+                  }
                 },
                 icon: const Icon(Icons.people),
                 label: const Text("Attendance")),

@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:developer';
 import 'dart:io';
 
@@ -18,6 +20,9 @@ class AppCubit extends Cubit<AppStates> {
   final supabase = Supabase.instance.client;
   // TabController tabController = TabController(length: 2,vsync: this);
 
+  void reset(){
+    // resetting the cubit
+  }
   List screens = [const TrainScreen(), ProfileScreen()];
   int currentIndex = 0;
   void changeBottomNav({required int value}) {
@@ -43,7 +48,10 @@ class AppCubit extends Cubit<AppStates> {
   List<dynamic> upcomingTrain = [];
   List<dynamic> beforeTrain = [];
   void getTraining() async {
-    var l = await selectMultiSupa(table: "trainings", columns: "");
+    var l = await supabase
+        .from('trainings')
+        .select()
+        .eq('team', userData["team_code"]);
     l.forEach((element) {
       if (DateTime.parse(element['date']).isAfter(DateTime.now())) {
         upcomingTrain.add(element);
@@ -103,8 +111,12 @@ class AppCubit extends Cubit<AppStates> {
   Color? rightColor = Colors.grey;
 
   void getSwimmers() async {
-    var swims =
-        await supabase.from('users').select().eq('user_type', "Swimmer");
+    var swims = await supabase
+        .from('users')
+        .select()
+        .eq('user_type', "Swimmer")
+        .eq("team_code", userData["team_code"]);
+    log(swims.toString());
     swimmers = swims;
   }
 
@@ -115,11 +127,11 @@ class AppCubit extends Cubit<AppStates> {
   }
 
   bool checkAttendance = false;
-
+  List ifAttendance = [];
   void testio({required trainingID}) {
     supabase
         .from("attendance")
-        .select()
+        .select('user_id,attended,users(full_name,birth_date,profile_picture)')
         .eq("training_id", trainingID)
         .catchError((onError) {
       print(onError.toString());
@@ -129,6 +141,7 @@ class AppCubit extends Cubit<AppStates> {
         checkAttendance = false;
       } else {
         checkAttendance = true;
+        ifAttendance = value;
       }
       log(checkAttendance.toString());
     });

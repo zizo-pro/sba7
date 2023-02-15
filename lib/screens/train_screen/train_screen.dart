@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:sba7/cubits/AppCubit/app_cubit.dart';
 import 'package:sba7/cubits/AppCubit/app_states.dart';
-import 'package:sba7/screens/login_screen/login_screen.dart';
-import 'package:sba7/screens/train_info_screen/train_info_screen.dart';
-import 'package:sba7/shared/cache_helper.dart';
 import 'package:sba7/shared/components.dart';
-import 'package:sba7/shared/constants.dart';
 
 class TrainScreen extends StatelessWidget {
   const TrainScreen({super.key});
@@ -37,7 +32,9 @@ class TrainScreen extends StatelessWidget {
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) => trainingCard(
-                              item: cubit.upcomingTrain[index], cubit: cubit),
+                              item: cubit.upcomingTrain[index],
+                              cubit: cubit,
+                              context: context),
                           separatorBuilder: (context, index) =>
                               const SizedBox(height: 20),
                           itemCount: cubit.upcomingTrain.length),
@@ -54,7 +51,8 @@ class TrainScreen extends StatelessWidget {
                               physics: const NeverScrollableScrollPhysics(),
                               itemBuilder: (context, index) => trainingCard(
                                   item: cubit.beforeTrain[index],
-                                  context: context,cubit: cubit),
+                                  context: context,
+                                  cubit: cubit),
                               separatorBuilder: (context, index) =>
                                   const SizedBox(height: 20),
                               itemCount: cubit.beforeTrain.length),
@@ -62,7 +60,7 @@ class TrainScreen extends StatelessWidget {
                               onPressed: () {
                                 logOut(context: context);
                               },
-                              child: Text("Logout"))
+                              child: const Text("Logout"))
                         ],
                       ),
                     ),

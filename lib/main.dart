@@ -1,6 +1,6 @@
 // import 'package:firebase_auth/firebase_auth.dart';
+// ignore_for_file: deprecated_member_use
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sba7/cubits/AppCubit/app_cubit.dart';
@@ -9,7 +9,6 @@ import 'package:sba7/cubits/Login_Cubit/login_states.dart';
 import 'package:sba7/layout/home_layout.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:sba7/screens/login_screen/login_screen.dart';
-// import 'package:sba7/screens/register_screen/complete_regestiration_screen.dart';
 import 'package:sba7/shared/bloc_observer.dart';
 import 'package:sba7/shared/cache_helper.dart';
 import 'package:sba7/shared/constants.dart';
@@ -32,9 +31,10 @@ void main() async {
   token = CacheHelper.getData(key: 'token');
   teamCode = CacheHelper.getData(key: 'team_code');
   userAuth = CacheHelper.getData(key: 'userAuth');
-  String userdal = CacheHelper.getData(key: 'userData');
+  dynamic userdal = CacheHelper.getData(key: 'userData');
+  if (userdal != null){
   userData = json.decode(userdal);
-  print(userData.runtimeType);
+  }
   if (token != null) {
     widget = const MyHomePage();
   } else {
@@ -48,7 +48,7 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   final Widget? startWidget;
-  MyApp({super.key, this.startWidget});
+  const MyApp({super.key, this.startWidget});
 
   // This widget is the root of your application.
   @override

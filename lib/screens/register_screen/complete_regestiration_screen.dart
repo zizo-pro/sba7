@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, sized_box_for_whitespace
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,7 +26,7 @@ class CompleteRegisterScreen extends StatelessWidget {
       child: Text("Assistant"),
     )
   ];
-  List<String> texts = ["Swimmer", "Coach", "Assistant"];
+  final List<String> texts = ["Swimmer", "Coach", "Assistant"];
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<LoginCubit, LoginStates>(
@@ -39,6 +41,39 @@ class CompleteRegisterScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    textfield(
+                        controller: cubit.phoneReg,
+                        type: TextInputType.phone,
+                        label: "Phone Number",
+                        prefix: Icons.phone,
+                        obscure: false,
+                        validate: (value) {
+                          if (cubit.phoneReg.text.isNotEmpty) {
+                            return null;
+                          } else {
+                            return 'Please enter a valid phone number';
+                          }
+                        }),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    textfield(
+                        controller: cubit.teamCodeReg,
+                        type: TextInputType.phone,
+                        label: "Team Code",
+                        prefix: Icons.people,
+                        obscure: false,
+                        validate: (value) {
+                          if (cubit.teamCodes
+                              .contains(cubit.teamCodeReg.text)) {
+                            return null;
+                          } else {
+                            return "Please enter a valid team code";
+                          }
+                        }),
+                    const SizedBox(
+                      height: 15,
+                    ),
                     const Text(
                       " user type",
                       style: TextStyle(fontSize: 12),
@@ -49,7 +84,7 @@ class CompleteRegisterScreen extends StatelessWidget {
                     Container(
                       width: double.infinity,
                       child: DropdownButtonFormField(
-                          hint: Text("User"),
+                          hint: const Text("User"),
                           decoration: const InputDecoration(
                               border: OutlineInputBorder(
                                   borderRadius:
@@ -67,7 +102,6 @@ class CompleteRegisterScreen extends StatelessWidget {
                       " Birth Date",
                       style: TextStyle(fontSize: 12),
                     ),
-
                     Container(
                       height: 100,
                       child: CupertinoDatePicker(
@@ -91,6 +125,8 @@ class CompleteRegisterScreen extends StatelessWidget {
                                       uemail: userEmail,
                                       userType: texts[cubit.dropDownValue],
                                       context: context,
+                                      code: cubit.teamCodeReg.text,
+                                      phone: cubit.phoneReg.text,
                                       uid: uid)
                                   .then((value) => print("done"))
                                   .catchError((onError) {

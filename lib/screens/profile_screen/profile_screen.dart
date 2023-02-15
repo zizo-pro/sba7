@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:age_calculator/age_calculator.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -77,7 +79,7 @@ class ProfileScreen extends StatelessWidget {
                       children: [
                         Text(
                           "${toBeginningOfSentenceCase(userData['full_name'])}",
-                          style: TextStyle(
+                          style:const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.w600),
                         ),
                         Text(
