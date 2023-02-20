@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sba7/cubits/AppCubit/app_states.dart';
+import 'package:sba7/screens/championship_screen/championship_screen.dart';
 import 'package:sba7/screens/profile_screen/profile_screen.dart';
 import 'package:sba7/screens/train_screen/train_screen.dart';
 import 'package:sba7/shared/cache_helper.dart';
@@ -20,10 +21,15 @@ class AppCubit extends Cubit<AppStates> {
   final supabase = Supabase.instance.client;
   // TabController tabController = TabController(length: 2,vsync: this);
 
-  void reset(){
-    // resetting the cubit
+  void reset() {
+    currentIndex = 0;
   }
-  List screens = [const TrainScreen(), ProfileScreen()];
+
+  List screens = [
+    const TrainScreen(),
+    const ChampionshipScreen(),
+    ProfileScreen()
+  ];
   int currentIndex = 0;
   void changeBottomNav({required int value}) {
     currentIndex = value;
@@ -99,7 +105,7 @@ class AppCubit extends Cubit<AppStates> {
     });
   }
 
-  void getUserData({required email}) async {
+  Future<void> getUserData({required email}) async {
     var userDatal = await supabase.from("users").select().eq('email', email);
     CacheHelper.saveData(key: "userData", value: userDatal[0]);
     userData = userDatal[0];
@@ -116,7 +122,7 @@ class AppCubit extends Cubit<AppStates> {
         .select()
         .eq('user_type', "Swimmer")
         .eq("team_code", userData["team_code"]);
-    log(swims.toString());
+    // log(swims.toString());
     swimmers = swims;
   }
 
@@ -162,5 +168,77 @@ class AppCubit extends Cubit<AppStates> {
     } else {
       log("false");
     }
+  }
+  // Finish attendace area
+
+  // Start Championships area
+  List championshipsData = [];
+  List<DropdownMenuItem> championships = [];
+  dynamic championshipsDropdownValue = 0;
+  void changeChampionsDropDown({required int value}) {
+    championshipsDropdownValue = value;
+    emit(ChampionshipsDropdownState());
+  }
+
+  List eventsData = [];
+  dynamic eventsDropdownValue = 0;
+  List<DropdownMenuItem> events = [];
+  void changeEventDropDown({required int value}) {
+    eventsDropdownValue = value;
+    emit(ChampionshipsDropdownState());
+  }
+
+  Future<void> getChampionships() async {
+    championships = [];
+    championshipsData = [];
+    await supabase
+        .from("championships")
+        .select('name,year,month')
+        .then((value) {
+      championshipsData = value;
+      int x = 1;
+      championships.add(DropdownMenuItem(
+        value: 0,
+        child: Text('...'),
+      ));
+      value.forEach((element) {
+        championships.add(
+          DropdownMenuItem(
+            value: x,
+            child: Text("${element['name']} ${element['year']}"),
+          ),
+        );
+        x += 1;
+        emit(ChampionGetDataSuccessState());
+      });
+    }).catchError((onError) => print(onError.toString()));
+  }
+
+  Future<void> getEvents() async {
+    events = [];
+    eventsData = [];
+    await supabase.from("events").select('event').then((value) {
+      int x = 1;
+      eventsData = value;
+      events.add(DropdownMenuItem(
+        value: 0,
+        child: Text('...'),
+      ));
+      value.forEach((element) {
+        events.add(
+          DropdownMenuItem(
+            value: x,
+            child: Text("${element['event']}"),
+          ),
+        );
+        x += 1;
+        emit(EventGetDataSuccessState());
+      });
+    }).catchError((onError) => print(onError.toString()));
+  }
+
+  TextEditingController swimmerSearchController = TextEditingController();
+  void swimmerSearch() {
+    getChampionships();
   }
 }

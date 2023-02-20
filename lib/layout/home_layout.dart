@@ -6,7 +6,8 @@ import 'package:sba7/cubits/AppCubit/app_states.dart';
 import 'package:sba7/shared/constants.dart';
 
 class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key});
+  final userEmail;
+  MyHomePage({super.key, this.userEmail});
 
   @override
   Widget build(BuildContext context) {
@@ -33,9 +34,10 @@ class MyHomePage extends StatelessWidget {
                 currentIndex: cubit.currentIndex,
                 items: const [
                   BottomNavigationBarItem(
-                      icon: Icon(Icons.home), label: "Home"),
+                      icon: Icon(Icons.home), label: "Trainings"),
+                      BottomNavigationBarItem(icon: Icon(Icons.emoji_events),label: "Championships"),
                   BottomNavigationBarItem(
-                      icon: Icon(Icons.person_rounded), label: "Profile")
+                      icon: Icon(Icons.person_rounded), label: "Profile"),
                 ]),
           ),
         );

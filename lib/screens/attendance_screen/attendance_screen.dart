@@ -22,6 +22,8 @@ class AttendanceScreeen extends StatelessWidget {
                 onPressed: () {
                   AppCubit.get(context)
                       .submitAttenddance(trainingID: trainingID);
+                  Navigator.pop(context);
+                  Navigator.pop(context);
                 },
                 icon: const Icon(Icons.check))
           ],

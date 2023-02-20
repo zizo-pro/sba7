@@ -72,7 +72,7 @@ class LoginCubit extends Cubit<LoginStates> {
             userAuth = element['user_type'];
             teamCode = element['team_code'];
             getUserData(email: email).then((value) {
-              navigateAndFinish(context, const MyHomePage());
+              navigateAndFinish(context, MyHomePage(userEmail: email,));
             });
 
             emit(LoginSuccessState());
@@ -208,7 +208,7 @@ class LoginCubit extends Cubit<LoginStates> {
           userAuth = userType;
           getUserData(email: uemail).then((value) {
             CacheHelper.saveData(key: "userAuth", value: userType);
-            navigateAndFinish(context, const MyHomePage());
+            navigateAndFinish(context, MyHomePage(userEmail: uemail,));
           });
         });
   }
@@ -231,7 +231,7 @@ class LoginCubit extends Cubit<LoginStates> {
       if (ems.contains(value.user!.email)) {
         if (emails[ems.indexOf(value.user!.email)]['isComplete'] == true) {
           getUserData(email: value.user!.email).then(
-            (value) => navigateAndFinish(context, const MyHomePage()),
+            (valu) => navigateAndFinish(context, MyHomePage(userEmail: value.user!.email)),
           );
         } else {
           navigateTo(

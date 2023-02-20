@@ -36,7 +36,7 @@ void main() async {
   userData = json.decode(userdal);
   }
   if (token != null) {
-    widget = const MyHomePage();
+    widget = MyHomePage(userEmail: userData['email']);
   } else {
     widget = const LoginScreen();
   }
@@ -61,7 +61,8 @@ class MyApp extends StatelessWidget {
               ..getEmail(),
           ),
           BlocProvider(
-            create: (context) => AppCubit()..getTraining()..getUserData(email: userData['email']),
+            create: (context) => AppCubit()..getTraining()..getUserData(email: userData['email'])..getChampionships()
+      ..getEvents(),
           )
         ],
         child: BlocConsumer<LoginCubit, LoginStates>(

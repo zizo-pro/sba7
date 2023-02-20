@@ -1,4 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -35,6 +37,7 @@ void logOut({required context}) {
     userAuth = null;
     swimmers = null;
     token = null;
+    FirebaseAuth.instance.signOut();
     navigateAndFinish(
       context,
       const LoginScreen(),
