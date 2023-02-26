@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key, this.startWidget});
 
   // This widget is the root of your application.
-  @override
+  @override 
   Widget build(BuildContext context) {
     return MultiBlocProvider(
         providers: [
@@ -61,8 +61,8 @@ class MyApp extends StatelessWidget {
               ..getEmail(),
           ),
           BlocProvider(
-            create: (context) => AppCubit()..getTraining()..getUserData(email: userData['email'])..getChampionships()
-      ..getEvents(),
+            create: (context) => AppCubit()..getTraining()..getUserData(email: userData['email'])
+      ,
           )
         ],
         child: BlocConsumer<LoginCubit, LoginStates>(

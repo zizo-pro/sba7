@@ -321,3 +321,70 @@ Widget userAttendanceCard({required swimmerData, required context}) {
         );
       });
 }
+
+Widget championShipResult({required resData}) {
+  return Container(
+    padding: const EdgeInsets.all(8),
+    height: 80,
+    width: double.infinity,
+    decoration: BoxDecoration(
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey[400] as Color,
+          blurStyle: BlurStyle.outer,
+          spreadRadius: 0.6,
+          blurRadius: 7,
+        )
+      ],
+    ),
+    child: Padding(
+      padding: const EdgeInsets.all(6),
+      child: Row(children: [
+        CircleAvatar(
+            radius: 27,
+            child: ClipOval(
+              child: SizedBox.fromSize(
+                size: const Size.fromRadius(80),
+                child: CachedNetworkImage(
+                  imageUrl: resData['users']['profile_picture'],
+                  fit: BoxFit.cover,
+                ),
+              ),
+            )),
+        const SizedBox(width: 10),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              toBeginningOfSentenceCase(
+                      resData['users']["full_name"].toString())
+                  .toString(),
+              style: const TextStyle(fontSize: 16),
+            ),
+            Text(
+              DateTime.parse(resData['users']['birth_date']).year.toString(),
+              style: TextStyle(color: Colors.grey[500]),
+            ),
+          ],
+        ),
+        const Spacer(),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              toBeginningOfSentenceCase(resData['events']["event"].toString())
+                  .toString(),
+              style: const TextStyle(fontSize: 16),
+            ),
+            Text(
+              resData['score'],
+              style: TextStyle(color: Colors.grey[600]),
+            ),
+          ],
+        )
+      ]),
+    ),
+  );
+}

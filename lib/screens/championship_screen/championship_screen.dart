@@ -1,3 +1,4 @@
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -11,84 +12,105 @@ class ChampionshipScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AppCubit.get(context).getChampionships();
+    AppCubit.get(context).getEvents();
+    AppCubit.get(context).getChampionshipsResults();
+
     return BlocConsumer<AppCubit, AppStates>(
       listener: (context, state) {},
       builder: (context, state) {
         var cubit = AppCubit.get(context);
-        return SafeArea(
-            child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Scaffold(
-            body: Column(children: [
-              Row(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Championship'),
-                      const SizedBox(
-                        height: 1,
-                      ),
-                      Container(
-                        width: 160,
-                        child: DropdownButtonFormField(
-                          items: cubit.championships,
-                          onChanged: (value) {
-                            cubit.changeChampionsDropDown(value: value);
-                          },
-                          iconSize: 20,
-                          value: cubit.championshipsDropdownValue,
-                          decoration: const InputDecoration(
-                              border: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(6)))),
+        return ConditionalBuilder(
+          condition: (cubit.championships.isNotEmpty && cubit.events.isNotEmpty && cubit.championshipResults.isNotEmpty),
+          fallback: (context) => const Center(child: CircularProgressIndicator()),
+          builder:(context) =>  SafeArea(
+              child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Scaffold(
+              body: Column(children: [
+                Row(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Championship'),
+                        const SizedBox(
+                          height: 1,
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Event'),
-                      const SizedBox(
-                        height: 1,
-                      ),
-                      Container(
-                        width: 160,
-                        child: DropdownButtonFormField(
-                          items: cubit.events,
-                          onChanged: (value) {
-                            cubit.changeEventDropDown(value: value);
-                          },
-                          value: cubit.eventsDropdownValue,
-                          decoration: const InputDecoration(
-                              border: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(6)))),
+                        Container(
+                          width: 160,
+                          child: DropdownButtonFormField(
+                            items: cubit.championships,
+                            onChanged: (value) {
+                              cubit.changeChampionsDropDown(value: value);
+                            },
+                            iconSize: 20,
+                            value: cubit.championshipsDropdownValue,
+                            decoration: const InputDecoration(
+                                border: OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(6)))),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              textfield(
-                  controller: cubit.swimmerSearchController,
-                  type: TextInputType.name,
-                  label: "Swimmer Name",
-                  prefix: Icons.person,
-                  obscure: false,
-                  onChange: (value) {
-                    cubit.swimmerSearch();
-                  }),
-            ]),
-          ),
-        ));
+                      ],
+                    ),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Event'),
+                        const SizedBox(
+                          height: 1,
+                        ),
+                        Container(
+                          width: 160,
+                          child: DropdownButtonFormField(
+                            items: cubit.events,
+                            onChanged: (value) {
+                              cubit.changeEventDropDown(value: value);
+                            },
+                            value: cubit.eventsDropdownValue,
+                            decoration: const InputDecoration(
+                                border: OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(6)))),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                textfield(
+                    controller: cubit.swimmerSearchController,
+                    type: TextInputType.name,
+                    label: "Swimmer Name",
+                    prefix: Icons.person,
+                    obscure: false,
+                    onChange: (value) {
+                      cubit.swimmerSearch();
+                    }),
+                    const SizedBox(height: 10,),
+                    Container(width: double.infinity,child: TextButton(child: Text("Filter"),onPressed: () => cubit.filter(),),),
+                const SizedBox(
+                  height: 15,
+                ),
+                ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) => championShipResult(
+                        resData: cubit.championshipResults[index]),
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 10),
+                    itemCount: cubit.championshipResults.length)
+              ]),
+            ),
+          )),
+        );
       },
     );
   }

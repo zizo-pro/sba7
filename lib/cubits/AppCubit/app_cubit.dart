@@ -173,14 +173,84 @@ class AppCubit extends Cubit<AppStates> {
 
   // Start Championships area
   List championshipsData = [];
+  List uneditedChampionResult = [];
   List<DropdownMenuItem> championships = [];
   dynamic championshipsDropdownValue = 0;
-  void changeChampionsDropDown({required int value}) {
+
+  Future<void> changeChampionsDropDown({required int value}) async {
     championshipsDropdownValue = value;
     emit(ChampionshipsDropdownState());
   }
 
-  List eventsData = [];
+  void filterChampion({required int value}) {
+    for (var i in uneditedChampionResult) {
+      log("${i['championships']['name']} ${i['championships']['year']}");
+      print(
+          "${championshipsData[value - 1]['name']} ${championshipsData[value - 1]['year']}");
+      if ("${i['championships']['name']} ${i['championships']['year']}" ==
+          "${championshipsData[value - 1]['name']} ${championshipsData[value - 1]['year']}") {
+        championshipResults.add(i);
+      }
+    }
+  }
+
+  void filterEvent({required int value}) {
+    for (var i in uneditedChampionResult) {
+      if (i['events']['event'] == eventsData[value - 1]['event']) {
+        championshipResults.add(i);
+      }
+    }
+  }
+
+  void filter() {
+    championshipResults = [];
+    if (championshipsDropdownValue == 0 &&
+        eventsDropdownValue == 0 &&
+        swimmerSearchController.text == '') {
+      championshipResults = uneditedChampionResult;
+    } else if (championshipsDropdownValue != 0 &&
+        eventsDropdownValue == 0 &&
+        swimmerSearchController.text == '') {
+      filterChampion(value: championshipsDropdownValue);
+    } else if (championshipsDropdownValue == 0 &&
+        eventsDropdownValue != 0 &&
+        swimmerSearchController.text == '') {
+      filterEvent(value: eventsDropdownValue);
+    } else if (championshipsDropdownValue == 0 &&
+        eventsDropdownValue == 0 &&
+        swimmerSearchController.text != '') {
+      for (var i in uneditedChampionResult) {
+        log(i['users']['full_name']
+            .contains(swimmerSearchController.text)
+            .toString());
+        print(swimmerSearchController.text);
+        if (i['users']['full_name']
+            .toLowerCase()
+            .contains(swimmerSearchController.text.toLowerCase())) {
+          championshipResults.add(i);
+        }
+      }
+    } else if (championshipsDropdownValue != 0 &&
+        eventsDropdownValue != 0 &&
+        swimmerSearchController.text == '') {
+      for (var i in uneditedChampionResult) {
+        if (i['events']['event'] ==
+                eventsData[eventsDropdownValue - 1]['event'] &&
+            "${i['championships']['name']} ${i['championships']['year']}" ==
+                "${championshipsData[championshipsDropdownValue - 1]['name']} ${championshipsData[championshipsDropdownValue - 1]['year']}") {
+          championshipResults.add(i);
+        }
+      }
+    } else if (championshipsDropdownValue != 0 &&
+        eventsDropdownValue == 0 &&
+        swimmerSearchController.text != '') {
+    } else if (championshipsDropdownValue == 0 &&
+        eventsDropdownValue != 0 &&
+        swimmerSearchController.text != '') {
+    } else {}
+    emit(FilterAppState());
+  }
+
   dynamic eventsDropdownValue = 0;
   List<DropdownMenuItem> events = [];
   void changeEventDropDown({required int value}) {
@@ -214,12 +284,16 @@ class AppCubit extends Cubit<AppStates> {
     }).catchError((onError) => print(onError.toString()));
   }
 
+  List eventsData = [];
+  List uneditedEvents = [];
   Future<void> getEvents() async {
     events = [];
+    uneditedEvents = [];
     eventsData = [];
     await supabase.from("events").select('event').then((value) {
       int x = 1;
       eventsData = value;
+      uneditedEvents = value;
       events.add(DropdownMenuItem(
         value: 0,
         child: Text('...'),
@@ -239,6 +313,20 @@ class AppCubit extends Cubit<AppStates> {
 
   TextEditingController swimmerSearchController = TextEditingController();
   void swimmerSearch() {
-    getChampionships();
+    getChampionshipsResults();
+  }
+
+  List championshipResults = [];
+  Future<void> getChampionshipsResults() async {
+    await supabase
+        .from('championship_results')
+        .select(
+            "users!inner(full_name,birth_date,profile_picture),events(event),championships(name,year),score")
+        .eq('users.team_code', userData['team_code'])
+        .then((value) {
+      championshipResults = value;
+      uneditedChampionResult = value;
+      log(value.toString());
+    });
   }
 }

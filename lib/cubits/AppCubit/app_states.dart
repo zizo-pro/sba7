@@ -23,4 +23,6 @@ class ChampionshipsDropdownState extends AppStates{}
 class ChampionGetDataSuccessState extends AppStates{}
 class EventGetDataSuccessState extends AppStates{}
 
+class FilterAppState extends AppStates{}
+
 
