@@ -1,11 +1,15 @@
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sba7/cubits/AppCubit/app_cubit.dart';
 import 'package:sba7/cubits/AppCubit/app_states.dart';
+import 'package:sba7/models/user_model.dart';
 import 'package:sba7/shared/components.dart';
+import 'package:sba7/shared/constants.dart';
+import 'package:textfield_search/textfield_search.dart';
 
 class ChampionshipScreen extends StatelessWidget {
   const ChampionshipScreen({super.key});
@@ -21,13 +25,121 @@ class ChampionshipScreen extends StatelessWidget {
       builder: (context, state) {
         var cubit = AppCubit.get(context);
         return ConditionalBuilder(
-          condition: (cubit.championships.isNotEmpty && cubit.events.isNotEmpty && cubit.championshipResults.isNotEmpty),
-          fallback: (context) => const Center(child: CircularProgressIndicator()),
-          builder:(context) =>  SafeArea(
-              child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Scaffold(
-              body: Column(children: [
+          condition: (cubit.championships.isNotEmpty &&
+              cubit.events.isNotEmpty &&
+              cubit.championshipResults.isNotEmpty),
+          fallback: (context) =>
+              const Center(child: CircularProgressIndicator()),
+          builder: (context) => Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.white,
+              elevation: 2,
+              title: const Text(
+                "Championships",
+                style: TextStyle(color: Colors.blue),
+              ),
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                          content: Container(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            TextFieldSearch(
+                              decoration: InputDecoration(
+                                hintText: "Search",
+                                prefixIcon: Icon(
+                                  Icons.search,
+                                  color: Colors.black45,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  borderSide: BorderSide.none,
+                                ),
+                                filled: true,
+                                fillColor: Colors.grey[200],
+                              ),
+                              label: "Swimmer Name",
+                              initialList: swimmerNames,
+                              controller:
+                                  cubit.swimmerChampionResultSearchController,
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            const Text('Championship'),
+                            const SizedBox(
+                              height: 1,
+                            ),
+                            Container(
+                              width: 250,
+                              child: DropdownButtonFormField(
+                                items: cubit.championships,
+                                onChanged: (value) {
+                                  cubit.changeChampionsDropDown(value: value);
+                                },
+                                iconSize: 20,
+                                value: cubit.championshipsDropdownValue,
+                                decoration: const InputDecoration(
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(6)))),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            const Text('Event'),
+                            const SizedBox(
+                              height: 1,
+                            ),
+                            Container(
+                              width: 250,
+                              child: DropdownButtonFormField(
+                                items: cubit.events
+                                // .getRange(1, cubit.events.length)
+                                // .toList(),
+                                ,
+                                onChanged: (value) {
+                                  cubit.changeEventDropDown(value: value);
+                                },
+                                value: cubit.eventsDropdownValue,
+                                decoration: const InputDecoration(
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(6)))),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            textfield(
+                                controller: cubit.championResultTimeContoller,
+                                type: TextInputType.datetime,
+                                label: "Score",
+                                prefix: Icons.alarm,
+                                obscure: false),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            TextButton(
+                                onPressed: () {}, child: const Text("Add"))
+                          ],
+                        ),
+                      )),
+                    );
+                  },
+                  icon: const Icon(Icons.add),
+                  color: Colors.blue,
+                )
+              ],
+            ),
+            body: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(children: [
                 Row(
                   children: [
                     Column(
@@ -85,17 +197,28 @@ class ChampionshipScreen extends StatelessWidget {
                 const SizedBox(
                   height: 10,
                 ),
-                textfield(
-                    controller: cubit.swimmerSearchController,
-                    type: TextInputType.name,
-                    label: "Swimmer Name",
-                    prefix: Icons.person,
-                    obscure: false,
-                    onChange: (value) {
-                      cubit.swimmerSearch();
-                    }),
-                    const SizedBox(height: 10,),
-                    Container(width: double.infinity,child: TextButton(child: Text("Filter"),onPressed: () => cubit.filter(),),),
+                Row(
+                  children: [
+                    Expanded(
+                      child: textfield(
+                          controller: cubit.swimmerSearchController,
+                          type: TextInputType.name,
+                          label: "Swimmer Name",
+                          prefix: Icons.person,
+                          obscure: false,
+                          onChange: (value) {
+                            cubit.swimmerSearch();
+                          }),
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    TextButton(
+                      child: Text("Filter"),
+                      onPressed: () => cubit.filter(),
+                    ),
+                  ],
+                ),
                 const SizedBox(
                   height: 15,
                 ),
@@ -109,7 +232,7 @@ class ChampionshipScreen extends StatelessWidget {
                     itemCount: cubit.championshipResults.length)
               ]),
             ),
-          )),
+          ),
         );
       },
     );

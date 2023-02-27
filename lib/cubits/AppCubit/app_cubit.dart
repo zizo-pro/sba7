@@ -117,6 +117,7 @@ class AppCubit extends Cubit<AppStates> {
   Color? rightColor = Colors.grey;
 
   void getSwimmers() async {
+    swimmerNames = [];
     var swims = await supabase
         .from('users')
         .select()
@@ -124,6 +125,10 @@ class AppCubit extends Cubit<AppStates> {
         .eq("team_code", userData["team_code"]);
     // log(swims.toString());
     swimmers = swims;
+    for (var i in swims) {
+      swimmerNames
+          .add("${i['full_name']} ${DateTime.parse(i['birth_date']).year}");
+    }
   }
 
   Map attendance = {};
@@ -175,12 +180,13 @@ class AppCubit extends Cubit<AppStates> {
   List championshipsData = [];
   List uneditedChampionResult = [];
   List<DropdownMenuItem> championships = [];
-  dynamic championshipsDropdownValue = 0;
+  int championshipsDropdownValue = 0;
 
   Future<void> changeChampionsDropDown({required int value}) async {
     championshipsDropdownValue = value;
     emit(ChampionshipsDropdownState());
   }
+
 
   void filterChampion({required int value}) {
     for (var i in uneditedChampionResult) {
@@ -244,10 +250,40 @@ class AppCubit extends Cubit<AppStates> {
     } else if (championshipsDropdownValue != 0 &&
         eventsDropdownValue == 0 &&
         swimmerSearchController.text != '') {
+      for (var i in uneditedChampionResult) {
+        if ("${i['championships']['name']} ${i['championships']['year']}" ==
+                "${championshipsData[championshipsDropdownValue - 1]['name']} ${championshipsData[championshipsDropdownValue - 1]['year']}" &&
+            i['users']['full_name']
+                .toLowerCase()
+                .contains(swimmerSearchController.text.toLowerCase())) {
+          championshipResults.add(i);
+        }
+      }
     } else if (championshipsDropdownValue == 0 &&
         eventsDropdownValue != 0 &&
         swimmerSearchController.text != '') {
-    } else {}
+      for (var i in uneditedChampionResult) {
+        if (i['events']['event'] ==
+                eventsData[eventsDropdownValue - 1]['event'] &&
+            i['users']['full_name']
+                .toLowerCase()
+                .contains(swimmerSearchController.text.toLowerCase())) {
+          championshipResults.add(i);
+        }
+      }
+    } else {
+      for (var i in uneditedChampionResult) {
+        if (i['events']['event'] ==
+                eventsData[eventsDropdownValue - 1]['event'] &&
+            i['users']['full_name']
+                .toLowerCase()
+                .contains(swimmerSearchController.text.toLowerCase()) &&
+            "${i['championships']['name']} ${i['championships']['year']}" ==
+                "${championshipsData[championshipsDropdownValue - 1]['name']} ${championshipsData[championshipsDropdownValue - 1]['year']}") {
+          championshipResults.add(i);
+        }
+      }
+    }
     emit(FilterAppState());
   }
 
@@ -257,6 +293,7 @@ class AppCubit extends Cubit<AppStates> {
     eventsDropdownValue = value;
     emit(ChampionshipsDropdownState());
   }
+
 
   Future<void> getChampionships() async {
     championships = [];
@@ -329,4 +366,19 @@ class AppCubit extends Cubit<AppStates> {
       log(value.toString());
     });
   }
+
+  TextEditingController swimmerChampionResultSearchController=TextEditingController();
+  Future<List<String>> addSwimmerResultFilter(filter) async {
+    List<String> s = [];
+    for (var i in swimmers) {
+      if (i['full_name'].toString().toLowerCase().contains(filter)) {
+        s.add(i["full_name"]);
+      }
+    }
+    return s;
+  }
+
+  TextEditingController championResultTimeContoller =
+      TextEditingController();
+
 }
