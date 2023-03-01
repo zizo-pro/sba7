@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:sba7/cubits/AppCubit/app_cubit.dart';
 import 'package:sba7/cubits/AppCubit/app_states.dart';
@@ -52,8 +53,9 @@ Widget textfield({
   Function(String?)? onSubmit,
   Function(String?)? onChange,
   String? Function(String?)? validate,
-  required var label,
+  var label,
   required IconData prefix,
+  String? hint,
   required bool obscure,
 }) =>
     TextFormField(
@@ -66,6 +68,7 @@ Widget textfield({
       decoration: InputDecoration(
         labelStyle: const TextStyle(color: Colors.black),
         labelText: label,
+        hintText: hint,
         border: const OutlineInputBorder(),
         prefixIcon: Icon(prefix),
       ),
@@ -387,4 +390,34 @@ Widget championShipResult({required resData}) {
       ]),
     ),
   );
+}
+
+
+void showToast({required String msg, required ToastStates state}) {
+  Fluttertoast.showToast(
+      msg: msg,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 5,
+      backgroundColor: chooseToastColor(state),
+      textColor: Colors.white,
+      fontSize: 16);
+}
+
+enum ToastStates { SUCCESS, ERROR, WARNING }
+
+Color chooseToastColor(ToastStates state) {
+  Color? color;
+  switch (state) {
+    case ToastStates.SUCCESS:
+      color = Colors.green;
+      break;
+    case ToastStates.WARNING:
+      color = Colors.yellow;
+      break;
+    case ToastStates.ERROR:
+      color = Colors.red;
+      break;
+  }
+  return color;
 }

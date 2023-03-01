@@ -187,7 +187,6 @@ class AppCubit extends Cubit<AppStates> {
     emit(ChampionshipsDropdownState());
   }
 
-
   void filterChampion({required int value}) {
     for (var i in uneditedChampionResult) {
       log("${i['championships']['name']} ${i['championships']['year']}");
@@ -294,13 +293,12 @@ class AppCubit extends Cubit<AppStates> {
     emit(ChampionshipsDropdownState());
   }
 
-
   Future<void> getChampionships() async {
     championships = [];
     championshipsData = [];
     await supabase
         .from("championships")
-        .select('name,year,month')
+        .select('name,year,month,id')
         .then((value) {
       championshipsData = value;
       int x = 1;
@@ -327,7 +325,7 @@ class AppCubit extends Cubit<AppStates> {
     events = [];
     uneditedEvents = [];
     eventsData = [];
-    await supabase.from("events").select('event').then((value) {
+    await supabase.from("events").select('event,id').then((value) {
       int x = 1;
       eventsData = value;
       uneditedEvents = value;
@@ -367,7 +365,8 @@ class AppCubit extends Cubit<AppStates> {
     });
   }
 
-  TextEditingController swimmerChampionResultSearchController=TextEditingController();
+  TextEditingController swimmerChampionResultSearchController =
+      TextEditingController();
   Future<List<String>> addSwimmerResultFilter(filter) async {
     List<String> s = [];
     for (var i in swimmers) {
@@ -378,7 +377,22 @@ class AppCubit extends Cubit<AppStates> {
     return s;
   }
 
-  TextEditingController championResultTimeContoller =
-      TextEditingController();
+  TextEditingController championResultTimeContoller = TextEditingController();
 
+  Future<void> addChampioshipResult() async {
+    await supabase.from("championship_results").insert({
+      "swimmer": swimmers[swimmerNames
+          .indexOf(swimmerChampionResultSearchController.text)]['uid'],
+      'championship': championshipsData[championshipsDropdownValue - 1]['id'],
+      'event': eventsData[eventsDropdownValue - 1]['id'],
+      'score': championResultTimeContoller.text
+    }).then((value) {
+      print("done");
+      eventsDropdownValue = 0;
+      championshipsDropdownValue = 0;
+      swimmerChampionResultSearchController.clear();
+      getChampionshipsResults()
+          .then((value) => emit(AddChampioshipResultState()));
+    }).catchError((onError) => print(onError.toString()));
+  }
 }

@@ -31,6 +31,7 @@ class ChampionshipScreen extends StatelessWidget {
           fallback: (context) =>
               const Center(child: CircularProgressIndicator()),
           builder: (context) => Scaffold(
+            resizeToAvoidBottomInset: false,
             appBar: AppBar(
               backgroundColor: Colors.white,
               elevation: 2,
@@ -41,96 +42,111 @@ class ChampionshipScreen extends StatelessWidget {
               actions: [
                 IconButton(
                   onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                          content: Container(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            TextFieldSearch(
-                              decoration: InputDecoration(
-                                hintText: "Search",
-                                prefixIcon: Icon(
-                                  Icons.search,
-                                  color: Colors.black45,
+                    if (userData['user_type'] == 'Assitant' ||
+                        userData['user_type'] == 'Coach') {
+                      showDialog(
+                        context: context,
+                        builder: (dialogcontext) => AlertDialog(
+                            content: Container(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              TextFieldSearch(
+                                decoration: InputDecoration(
+                                  hintText: "Search",
+                                  prefixIcon: Icon(
+                                    Icons.search,
+                                    color: Colors.black45,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.grey[200],
                                 ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  borderSide: BorderSide.none,
+                                label: "Swimmer Name",
+                                initialList: swimmerNames,
+                                controller:
+                                    cubit.swimmerChampionResultSearchController,
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              const Text('Championship'),
+                              const SizedBox(
+                                height: 1,
+                              ),
+                              Container(
+                                width: 250,
+                                child: DropdownButtonFormField(
+                                  items: cubit.championships,
+                                  onChanged: (value) {
+                                    cubit.changeChampionsDropDown(value: value);
+                                  },
+                                  iconSize: 20,
+                                  value: cubit.championshipsDropdownValue,
+                                  decoration: const InputDecoration(
+                                      border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(6)))),
                                 ),
-                                filled: true,
-                                fillColor: Colors.grey[200],
                               ),
-                              label: "Swimmer Name",
-                              initialList: swimmerNames,
-                              controller:
-                                  cubit.swimmerChampionResultSearchController,
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            const Text('Championship'),
-                            const SizedBox(
-                              height: 1,
-                            ),
-                            Container(
-                              width: 250,
-                              child: DropdownButtonFormField(
-                                items: cubit.championships,
-                                onChanged: (value) {
-                                  cubit.changeChampionsDropDown(value: value);
-                                },
-                                iconSize: 20,
-                                value: cubit.championshipsDropdownValue,
-                                decoration: const InputDecoration(
-                                    border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(6)))),
+                              const SizedBox(
+                                height: 15,
                               ),
-                            ),
-                            const SizedBox(
-                              height: 15,
-                            ),
-                            const Text('Event'),
-                            const SizedBox(
-                              height: 1,
-                            ),
-                            Container(
-                              width: 250,
-                              child: DropdownButtonFormField(
-                                items: cubit.events
-                                // .getRange(1, cubit.events.length)
-                                // .toList(),
-                                ,
-                                onChanged: (value) {
-                                  cubit.changeEventDropDown(value: value);
-                                },
-                                value: cubit.eventsDropdownValue,
-                                decoration: const InputDecoration(
-                                    border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(6)))),
+                              const Text('Event'),
+                              const SizedBox(
+                                height: 1,
                               ),
-                            ),
-                            const SizedBox(
-                              height: 15,
-                            ),
-                            textfield(
-                                controller: cubit.championResultTimeContoller,
-                                type: TextInputType.datetime,
-                                label: "Score",
-                                prefix: Icons.alarm,
-                                obscure: false),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            TextButton(
-                                onPressed: () {}, child: const Text("Add"))
-                          ],
-                        ),
-                      )),
-                    );
+                              Container(
+                                width: 250,
+                                child: DropdownButtonFormField(
+                                  items: cubit.events,
+                                  onChanged: (value) {
+                                    cubit.changeEventDropDown(value: value);
+                                  },
+                                  value: cubit.eventsDropdownValue,
+                                  decoration: const InputDecoration(
+                                      hintText: "Event",
+                                      border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(6)))),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              const Text('Score'),
+                              const SizedBox(
+                                height: 1,
+                              ),
+                              textfield(
+                                  controller: cubit.championResultTimeContoller,
+                                  type: TextInputType.datetime,
+                                  // label: "Score",
+                                  hint: "mm:ss:ms",
+                                  prefix: Icons.alarm,
+                                  obscure: false),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              TextButton(
+                                  onPressed: () {
+                                    cubit.addChampioshipResult().then((value) {
+                                      Navigator.pop(dialogcontext);
+                                    });
+                                  },
+                                  child: const Text("Add"))
+                            ],
+                          ),
+                        )),
+                      );
+                    } else {
+                      showToast(
+                          msg: "You're not Authorized to Add a result",
+                          state: ToastStates.WARNING);
+                    }
                   },
                   icon: const Icon(Icons.add),
                   color: Colors.blue,
@@ -139,98 +155,101 @@ class ChampionshipScreen extends StatelessWidget {
             ),
             body: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Column(children: [
-                Row(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('Championship'),
-                        const SizedBox(
-                          height: 1,
-                        ),
-                        Container(
-                          width: 160,
-                          child: DropdownButtonFormField(
-                            items: cubit.championships,
-                            onChanged: (value) {
-                              cubit.changeChampionsDropDown(value: value);
-                            },
-                            iconSize: 20,
-                            value: cubit.championshipsDropdownValue,
-                            decoration: const InputDecoration(
-                                border: OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(6)))),
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(children: [
+                  Row(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Championship'),
+                          const SizedBox(
+                            height: 1,
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('Event'),
-                        const SizedBox(
-                          height: 1,
-                        ),
-                        Container(
-                          width: 160,
-                          child: DropdownButtonFormField(
-                            items: cubit.events,
-                            onChanged: (value) {
-                              cubit.changeEventDropDown(value: value);
-                            },
-                            value: cubit.eventsDropdownValue,
-                            decoration: const InputDecoration(
-                                border: OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(6)))),
+                          Container(
+                            width: 160,
+                            child: DropdownButtonFormField(
+                              items: cubit.championships,
+                              onChanged: (value) {
+                                cubit.changeChampionsDropDown(value: value);
+                              },
+                              iconSize: 20,
+                              value: cubit.championshipsDropdownValue,
+                              decoration: const InputDecoration(
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(6)))),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: textfield(
-                          controller: cubit.swimmerSearchController,
-                          type: TextInputType.name,
-                          label: "Swimmer Name",
-                          prefix: Icons.person,
-                          obscure: false,
-                          onChange: (value) {
-                            cubit.swimmerSearch();
-                          }),
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    TextButton(
-                      child: Text("Filter"),
-                      onPressed: () => cubit.filter(),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) => championShipResult(
-                        resData: cubit.championshipResults[index]),
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(height: 10),
-                    itemCount: cubit.championshipResults.length)
-              ]),
+                        ],
+                      ),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Event'),
+                          const SizedBox(
+                            height: 1,
+                          ),
+                          Container(
+                            width: 160,
+                            child: DropdownButtonFormField(
+                              items: cubit.events,
+                              onChanged: (value) {
+                                cubit.changeEventDropDown(value: value);
+                              },
+                              value: cubit.eventsDropdownValue,
+                              decoration: const InputDecoration(
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(6)))),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: textfield(
+                            controller: cubit.swimmerSearchController,
+                            type: TextInputType.name,
+                            label: "Swimmer Name",
+                            prefix: Icons.person,
+                            obscure: false,
+                            onChange: (value) {
+                              cubit.swimmerSearch();
+                            }),
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      TextButton(
+                        child: Text("Filter"),
+                        onPressed: () => cubit.filter(),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) => championShipResult(
+                          resData: cubit.championshipResults[index]),
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 10),
+                      itemCount: cubit.championshipResults.length)
+                ]),
+              ),
             ),
           ),
         );

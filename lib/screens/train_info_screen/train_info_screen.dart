@@ -64,9 +64,10 @@ class _TrainInfoScreenState extends State<TrainInfoScreen> {
             height: 40,
             child: ElevatedButton.icon(
                 onPressed: () {
-                  AppCubit.get(context)
-                      .testio(trainingID: widget.training['id']);
-                  if (userData['user_type'] == "Coach" || userData['user_type'] == 'Assistant') {
+                  if (userData['user_type'] == "Coach" ||
+                      userData['user_type'] == 'Assistant') {
+                    AppCubit.get(context)
+                        .testio(trainingID: widget.training['id']);
                     navigateTo(
                         context,
                         AttendanceScreeen(
@@ -74,29 +75,14 @@ class _TrainInfoScreenState extends State<TrainInfoScreen> {
                           isAttendance: AppCubit.get(context).checkAttendance,
                         ));
                   } else {
-                    print("You're not Authorized");
+                    showToast(
+                        msg: "You are not Authorized to Take Attendance",
+                        state: ToastStates.WARNING);
                   }
                 },
                 icon: const Icon(Icons.people),
                 label: const Text("Attendance")),
           ),
-
-          // Container(
-          //   child: TabBar(
-          //       unselectedLabelColor: Colors.red,
-          //       labelColor: Colors.blue,
-          //       dividerColor: Colors.green,
-          //       indicatorColor: Colors.amber,
-          //       tabs: [
-          //         Tab(
-          //           text: "Attendance",
-          //         ),
-          //         Tab(
-          //           text: "lol",
-          //         )
-          //       ]),
-          // )
-          // TabBarView(controller: ,children: [Text("ziad"), Text("ebrahim")])
         ]),
       ),
     );

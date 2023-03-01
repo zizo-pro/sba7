@@ -25,4 +25,5 @@ class EventGetDataSuccessState extends AppStates{}
 
 class FilterAppState extends AppStates{}
 
+class AddChampioshipResultState extends AppStates{}
 
