@@ -207,7 +207,7 @@ class AppCubit extends Cubit<AppStates> {
     }
   }
 
-  void filter() {
+  Future<void> filter() async {
     championshipResults = [];
     if (championshipsDropdownValue == 0 &&
         eventsDropdownValue == 0 &&
@@ -286,6 +286,8 @@ class AppCubit extends Cubit<AppStates> {
     emit(FilterAppState());
   }
 
+  void checkFilter() {}
+
   dynamic eventsDropdownValue = 0;
   List<DropdownMenuItem> events = [];
   void changeEventDropDown({required int value}) {
@@ -302,7 +304,7 @@ class AppCubit extends Cubit<AppStates> {
         .then((value) {
       championshipsData = value;
       int x = 1;
-      championships.add(DropdownMenuItem(
+      championships.add(const DropdownMenuItem(
         value: 0,
         child: Text('...'),
       ));

@@ -28,8 +28,100 @@ class ChampionshipScreen extends StatelessWidget {
           condition: (cubit.championships.isNotEmpty &&
               cubit.events.isNotEmpty &&
               cubit.championshipResults.isNotEmpty),
-          fallback: (context) =>
-              const Center(child: CircularProgressIndicator()),
+          fallback: (context) {
+            if (state is FilterAppState ||
+                state is ChampionshipsDropdownState) {
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(children: [
+                  Row(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Championship'),
+                          const SizedBox(
+                            height: 1,
+                          ),
+                          Container(
+                            width: 160,
+                            child: DropdownButtonFormField(
+                              items: cubit.championships,
+                              onChanged: (value) {
+                                cubit.changeChampionsDropDown(value: value);
+                              },
+                              iconSize: 20,
+                              value: cubit.championshipsDropdownValue,
+                              decoration: const InputDecoration(
+                                  border: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(6)))),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Event'),
+                          const SizedBox(
+                            height: 1,
+                          ),
+                          Container(
+                            width: 160,
+                            child: DropdownButtonFormField(
+                              items: cubit.events,
+                              onChanged: (value) {
+                                cubit.changeEventDropDown(value: value);
+                              },
+                              value: cubit.eventsDropdownValue,
+                              decoration: const InputDecoration(
+                                  border: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(6)))),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: textfield(
+                            controller: cubit.swimmerSearchController,
+                            type: TextInputType.name,
+                            label: "Swimmer Name",
+                            prefix: Icons.person,
+                            obscure: false,
+                            onChange: (value) {
+                              cubit.swimmerSearch();
+                            }),
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      TextButton(
+                        child: Text("Filter"),
+                        onPressed: () {
+                          cubit.filter();
+                        },
+                      ),
+                    ],
+                  ),
+                  const Center(child: Text("No Results"))
+                ]),
+              );
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
+          },
           builder: (context) => Scaffold(
             resizeToAvoidBottomInset: false,
             appBar: AppBar(
@@ -233,7 +325,9 @@ class ChampionshipScreen extends StatelessWidget {
                       ),
                       TextButton(
                         child: Text("Filter"),
-                        onPressed: () => cubit.filter(),
+                        onPressed: () {
+                          cubit.filter();
+                        },
                       ),
                     ],
                   ),
