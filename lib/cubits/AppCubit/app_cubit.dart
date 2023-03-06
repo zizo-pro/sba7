@@ -140,6 +140,7 @@ class AppCubit extends Cubit<AppStates> {
   bool checkAttendance = false;
   List ifAttendance = [];
   void testio({required trainingID}) {
+    // ifAttendance = [];
     supabase
         .from("attendance")
         .select('user_id,attended,users(full_name,birth_date,profile_picture)')
@@ -161,18 +162,50 @@ class AppCubit extends Cubit<AppStates> {
   void submitAttenddance({required trainingID}) {
     if (attendance.length == swimmers.length) {
       attendance.forEach((key, value) {
-        supabase
-            .from('attendance')
-            .insert(
-                {"user_id": key, "training_id": trainingID, "attended": value})
-            .then((value) {})
-            .catchError((onError) {
-              log(onError.toString());
-            });
+        supabase.from('attendance').insert({
+          "user_id": key,
+          "training_id": trainingID,
+          "attended": value
+        }).then((value) {
+          testio(trainingID: trainingID);
+        }).catchError((onError) {
+          log(onError.toString());
+        });
       });
     } else {
       log("false");
     }
+  }
+
+  bool isEdit = false;
+  void editAttendance({required trainingId}) {
+    print(attendance);
+    print(swimmers);
+    isEdit = !isEdit;
+    if (isEdit == false) {
+      supabase
+          .from("attendance")
+          .delete()
+          .eq("training_id", trainingId)
+          .then((value) {
+        if (attendance.length == swimmers.length) {
+          attendance.forEach((key, value) {
+            supabase.from('attendance').insert({
+              "user_id": key,
+              "training_id": trainingId,
+              "attended": value
+            }).then((value) {
+              // testio(trainingID: trainingId);
+            }).catchError((onError) {
+              log(onError.toString());
+            });
+          });
+        } else {
+          log("false");
+        }
+      }).catchError((onError) => print(onError.toString()));
+    }
+    emit(AppAttendanceEditState());
   }
   // Finish attendace area
 

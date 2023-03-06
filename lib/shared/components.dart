@@ -160,6 +160,107 @@ Widget trainingCard({context, required item, cubit}) {
   );
 }
 
+Widget editAttendance({required swimmerData, required BuildContext context}) {
+  Color? wrongColor;
+  Color? rightColor;
+  if (swimmerData['attended']) {
+    rightColor = Colors.green;
+    wrongColor = Colors.grey;
+  } else {
+    wrongColor = Colors.red;
+    rightColor = Colors.grey;
+  }
+  return BlocConsumer<AppCubit, AppStates>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        var cubit = AppCubit.get(context);
+        return Container(
+          padding: const EdgeInsets.all(8),
+          height: 80,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey[400] as Color,
+                blurStyle: BlurStyle.outer,
+                spreadRadius: 0.6,
+                blurRadius: 7,
+              )
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(6),
+            child: Row(
+              children: [
+                CircleAvatar(
+                    radius: 27,
+                    child: ClipOval(
+                      child: SizedBox.fromSize(
+                        size: const Size.fromRadius(80),
+                        child: CachedNetworkImage(
+                          imageUrl: swimmerData['users']['profile_picture'],
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    )),
+                const SizedBox(width: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      toBeginningOfSentenceCase(
+                              swimmerData['users']["full_name"].toString())
+                          .toString(),
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      DateTime.parse(swimmerData['users']['birth_date'])
+                          .year
+                          .toString(),
+                      style: TextStyle(color: Colors.grey[500]),
+                    ),
+                  ],
+                ),
+                const Spacer(),
+                CircleAvatar(
+                  radius: 16,
+                  backgroundColor: rightColor,
+                  child: IconButton(
+                    iconSize: 16,
+                    color: Colors.white,
+                    icon: const Icon(Icons.check),
+                    onPressed: () {
+                      rightColor = Colors.green[600];
+                      wrongColor = Colors.grey;
+                      cubit.attendanceMap(
+                          userID: swimmerData['users']['uid'], attented: true);
+                    },
+                  ),
+                ),
+                const SizedBox(width: 10),
+                CircleAvatar(
+                  radius: 16,
+                  backgroundColor: wrongColor,
+                  child: IconButton(
+                    iconSize: 16,
+                    color: Colors.white,
+                    icon: const Icon(Icons.close),
+                    onPressed: () {
+                      rightColor = Colors.grey;
+                      wrongColor = Colors.red;
+                      cubit.attendanceMap(
+                          userID: swimmerData['users']['uid'], attented: false);
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      });
+}
+
 Widget alreadyAttendance({required swimmerData}) {
   Color? iconColor;
   IconData? icon;
@@ -391,7 +492,6 @@ Widget championShipResult({required resData}) {
     ),
   );
 }
-
 
 void showToast({required String msg, required ToastStates state}) {
   Fluttertoast.showToast(

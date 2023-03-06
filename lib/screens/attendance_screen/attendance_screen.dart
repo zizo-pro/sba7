@@ -1,27 +1,34 @@
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sba7/cubits/AppCubit/app_cubit.dart';
+import 'package:sba7/cubits/AppCubit/app_states.dart';
 import 'package:sba7/shared/components.dart';
 import 'package:sba7/shared/constants.dart';
 
-class AttendanceScreeen extends StatelessWidget {
+class AttendanceScreeen extends StatefulWidget {
   final String trainingID;
   final bool isAttendance;
   const AttendanceScreeen(
       {super.key, required this.trainingID, required this.isAttendance});
 
   @override
+  State<AttendanceScreeen> createState() => _AttendanceScreeenState();
+}
+
+class _AttendanceScreeenState extends State<AttendanceScreeen> {
+  @override
   Widget build(BuildContext context) {
     // complete the attendance screen by joining the two tables akeed enta fakr y3ny :)
     return ConditionalBuilder(
-      condition: isAttendance,
+      condition: widget.isAttendance,
       fallback: (context) => Scaffold(
         appBar: AppBar(
           actions: [
             IconButton(
                 onPressed: () {
                   AppCubit.get(context)
-                      .submitAttenddance(trainingID: trainingID);
+                      .submitAttenddance(trainingID: widget.trainingID);
                   Navigator.pop(context);
                   Navigator.pop(context);
                 },
@@ -51,6 +58,17 @@ class AttendanceScreeen extends StatelessWidget {
       builder: (context) {
         return SafeArea(
           child: Scaffold(
+            appBar: AppBar(actions: [
+              IconButton(
+                  onPressed: () {
+                    setState(() {
+                      AppCubit.get(context).editAttendance(trainingId: widget.trainingID);
+                    });
+                  },
+                  icon: AppCubit.get(context).isEdit
+                      ? Icon(Icons.check)
+                      : Icon(Icons.edit))
+            ]),
             body: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(20),
@@ -59,15 +77,31 @@ class AttendanceScreeen extends StatelessWidget {
                     const SizedBox(
                       height: 20,
                     ),
-                    ListView.separated(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) => alreadyAttendance(
-                            swimmerData:
-                                AppCubit.get(context).ifAttendance[index]),
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(height: 10),
-                        itemCount: AppCubit.get(context).ifAttendance.length)
+                    ConditionalBuilder(
+                        condition: AppCubit.get(context).isEdit,
+                        fallback: (context) => ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) => alreadyAttendance(
+                                swimmerData:
+                                    AppCubit.get(context).ifAttendance[index]),
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(height: 10),
+                            itemCount:
+                                AppCubit.get(context).ifAttendance.length),
+                        builder: (context) => ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) => editAttendance(
+                                swimmerData:
+                                    AppCubit.get(context).ifAttendance[index],
+                                context: context),
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(height: 10),
+                            itemCount:
+                                AppCubit.get(context).ifAttendance.length)
+                        //   ),
+                        )
                   ],
                 ),
               ),

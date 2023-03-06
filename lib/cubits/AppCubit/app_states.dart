@@ -18,6 +18,8 @@ class AppUploadProfilePhototSuccessState extends AppStates{}
 
 class AppAttendanceChangeBool extends AppStates{}
 
+class AppAttendanceEditState extends AppStates{}
+
 class ChampionshipsDropdownState extends AppStates{}
 
 class ChampionGetDataSuccessState extends AppStates{}
