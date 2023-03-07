@@ -134,7 +134,13 @@ class AppCubit extends Cubit<AppStates> {
   Map attendance = {};
   void attendanceMap({required userID, required attented}) {
     attendance[userID] = attented;
+
     emit(AppAttendanceChangeBool());
+  }
+
+  void updateAttendance({required userID, required attented}) {
+    attendance.update(userID, (value) => attented);
+    emit(AppAttendanceEditState());
   }
 
   bool checkAttendance = false;
@@ -152,6 +158,10 @@ class AppCubit extends Cubit<AppStates> {
       if (value.isEmpty) {
         checkAttendance = false;
       } else {
+        for (dynamic i in value) {
+          attendance[i['user_id']] = i['attended'];
+        }
+        print(attendance);
         checkAttendance = true;
         ifAttendance = value;
       }
@@ -178,7 +188,7 @@ class AppCubit extends Cubit<AppStates> {
   }
 
   bool isEdit = false;
-  void editAttendance({required trainingId}) {
+  void editAttendance({required trainingId, required BuildContext context}) {
     print(attendance);
     print(swimmers);
     isEdit = !isEdit;
@@ -190,20 +200,24 @@ class AppCubit extends Cubit<AppStates> {
           .then((value) {
         if (attendance.length == swimmers.length) {
           attendance.forEach((key, value) {
-            supabase.from('attendance').insert({
-              "user_id": key,
-              "training_id": trainingId,
-              "attended": value
-            }).then((value) {
-              // testio(trainingID: trainingId);
-            }).catchError((onError) {
-              log(onError.toString());
-            });
+            supabase
+                .from('attendance')
+                .insert({
+                  "user_id": key,
+                  "training_id": trainingId,
+                  "attended": value
+                })
+                .then((value) {})
+                .catchError((onError) {
+                  log(onError.toString());
+                });
           });
         } else {
           log("false");
         }
       }).catchError((onError) => print(onError.toString()));
+      Navigator.pop(context);
+      Navigator.pop(context);
     }
     emit(AppAttendanceEditState());
   }

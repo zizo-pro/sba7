@@ -233,8 +233,8 @@ Widget editAttendance({required swimmerData, required BuildContext context}) {
                     onPressed: () {
                       rightColor = Colors.green[600];
                       wrongColor = Colors.grey;
-                      cubit.attendanceMap(
-                          userID: swimmerData['users']['uid'], attented: true);
+                      cubit.updateAttendance(
+                          userID: swimmerData['user_id'], attented: true);
                     },
                   ),
                 ),
@@ -249,8 +249,8 @@ Widget editAttendance({required swimmerData, required BuildContext context}) {
                     onPressed: () {
                       rightColor = Colors.grey;
                       wrongColor = Colors.red;
-                      cubit.attendanceMap(
-                          userID: swimmerData['users']['uid'], attented: false);
+                      cubit.updateAttendance(
+                          userID: swimmerData['user_id'], attented: false);
                     },
                   ),
                 ),

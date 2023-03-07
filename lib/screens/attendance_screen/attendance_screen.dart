@@ -62,7 +62,9 @@ class _AttendanceScreeenState extends State<AttendanceScreeen> {
               IconButton(
                   onPressed: () {
                     setState(() {
-                      AppCubit.get(context).editAttendance(trainingId: widget.trainingID);
+                      AppCubit.get(context).editAttendance(
+                          trainingId: widget.trainingID, context: context);
+                  
                     });
                   },
                   icon: AppCubit.get(context).isEdit
