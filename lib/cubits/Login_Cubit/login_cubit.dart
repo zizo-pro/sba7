@@ -12,7 +12,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sba7/layout/home_layout.dart';
 import 'package:sba7/models/user_model.dart';
 import 'package:sba7/screens/register_screen/complete_regestiration_screen.dart';
-import 'package:sba7/screens/register_screen/complete_regestiration_screen_google.dart';
 import 'package:sba7/shared/components.dart';
 import 'package:sba7/shared/constants.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';

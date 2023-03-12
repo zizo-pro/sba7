@@ -20,6 +20,8 @@ class AppAttendanceChangeBool extends AppStates{}
 
 class AppAttendanceEditState extends AppStates{}
 
+class AppChangeBottomSheetState extends AppStates{}
+
 class ChampionshipsDropdownState extends AppStates{}
 
 class ChampionGetDataSuccessState extends AppStates{}
@@ -28,4 +30,8 @@ class EventGetDataSuccessState extends AppStates{}
 class FilterAppState extends AppStates{}
 
 class AddChampioshipResultState extends AppStates{}
+
+class AddTrainingDropDownState extends AppStates{}
+
+class AddTrainingRadioState extends AppStates{}
 

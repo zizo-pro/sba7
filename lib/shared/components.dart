@@ -52,6 +52,7 @@ Widget textfield({
   required TextInputType type,
   Function(String?)? onSubmit,
   Function(String?)? onChange,
+  Function()? onTap,
   String? Function(String?)? validate,
   var label,
   required IconData prefix,
@@ -65,6 +66,7 @@ Widget textfield({
       obscureText: obscure,
       onFieldSubmitted: onSubmit,
       onChanged: onChange,
+      onTap: onTap,
       decoration: InputDecoration(
         labelStyle: const TextStyle(color: Colors.black),
         labelText: label,

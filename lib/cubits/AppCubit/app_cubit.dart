@@ -25,11 +25,7 @@ class AppCubit extends Cubit<AppStates> {
     currentIndex = 0;
   }
 
-  List screens = [
-    const TrainScreen(),
-    const ChampionshipScreen(),
-    ProfileScreen()
-  ];
+  List screens = [TrainScreen(), const ChampionshipScreen(), ProfileScreen()];
   int currentIndex = 0;
   void changeBottomNav({required int value}) {
     currentIndex = value;
@@ -443,5 +439,27 @@ class AppCubit extends Cubit<AppStates> {
       getChampionshipsResults()
           .then((value) => emit(AddChampioshipResultState()));
     }).catchError((onError) => print(onError.toString()));
+  }
+
+  // add Training area
+
+  IconData fabIcon = Icons.edit;
+  bool isBottomSheetShown = false;
+  void bottomSheet({required bool isShow, required IconData icon}) {
+    isBottomSheetShown = isShow;
+    fabIcon = icon;
+    emit(AppChangeBottomSheetState());
+  }
+
+  int dropDownValue = 0;
+  void weekDaysDropDown({required int value}) {
+    dropDownValue = value;
+    emit(AddTrainingDropDownState());
+  }
+
+  String? rad;
+  void radioButton(value) {
+    rad = value;
+    emit(AddTrainingRadioState());
   }
 }
