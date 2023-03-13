@@ -32,8 +32,8 @@ void main() async {
   teamCode = CacheHelper.getData(key: 'team_code');
   userAuth = CacheHelper.getData(key: 'userAuth');
   dynamic userdal = CacheHelper.getData(key: 'userData');
-  if (userdal != null){
-  userData = json.decode(userdal);
+  if (userdal != null) {
+    userData = json.decode(userdal);
   }
   if (token != null) {
     widget = MyHomePage(userEmail: userData['email']);
@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key, this.startWidget});
 
   // This widget is the root of your application.
-  @override 
+  @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
         providers: [
@@ -61,8 +61,10 @@ class MyApp extends StatelessWidget {
               ..getEmail(),
           ),
           BlocProvider(
-            create: (context) => AppCubit()..getTraining()..getUserData(email: userData['email'])
-      ,
+            create: (context) => AppCubit()
+              ..getTraining()
+              ..getUserData(email: userData['email'])
+              ..getLocations(),
           )
         ],
         child: BlocConsumer<LoginCubit, LoginStates>(

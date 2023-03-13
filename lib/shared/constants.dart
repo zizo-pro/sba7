@@ -4,6 +4,7 @@ dynamic userAuth;
 dynamic userData;
 dynamic swimmers;
 List swimmerNames = [];
+const List<String> weekdays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
 const List<String> months = [
   'JAN',

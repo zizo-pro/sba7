@@ -7,6 +7,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:sba7/cubits/AppCubit/app_states.dart';
 import 'package:sba7/screens/championship_screen/championship_screen.dart';
 import 'package:sba7/screens/profile_screen/profile_screen.dart';
@@ -50,10 +51,12 @@ class AppCubit extends Cubit<AppStates> {
   List<dynamic> upcomingTrain = [];
   List<dynamic> beforeTrain = [];
   void getTraining() async {
+    beforeTrain = [];
+    upcomingTrain = [];
     var l = await supabase
         .from('trainings')
-        .select()
-        .eq('team', userData["team_code"]);
+        .select('id,team,date,training_locations(id,location,maps)')
+        .eq('team', userData["team_code"]).order('date',ascending: true);
     l.forEach((element) {
       if (DateTime.parse(element['date']).isAfter(DateTime.now())) {
         upcomingTrain.add(element);
@@ -150,14 +153,12 @@ class AppCubit extends Cubit<AppStates> {
         .catchError((onError) {
       print(onError.toString());
     }).then((value) {
-      print(value);
       if (value.isEmpty) {
         checkAttendance = false;
       } else {
         for (dynamic i in value) {
           attendance[i['user_id']] = i['attended'];
         }
-        print(attendance);
         checkAttendance = true;
         ifAttendance = value;
       }
@@ -185,8 +186,6 @@ class AppCubit extends Cubit<AppStates> {
 
   bool isEdit = false;
   void editAttendance({required trainingId, required BuildContext context}) {
-    print(attendance);
-    print(swimmers);
     isEdit = !isEdit;
     if (isEdit == false) {
       supabase
@@ -209,7 +208,6 @@ class AppCubit extends Cubit<AppStates> {
                 });
           });
         } else {
-          log("false");
         }
       }).catchError((onError) => print(onError.toString()));
       Navigator.pop(context);
@@ -232,9 +230,6 @@ class AppCubit extends Cubit<AppStates> {
 
   void filterChampion({required int value}) {
     for (var i in uneditedChampionResult) {
-      log("${i['championships']['name']} ${i['championships']['year']}");
-      print(
-          "${championshipsData[value - 1]['name']} ${championshipsData[value - 1]['year']}");
       if ("${i['championships']['name']} ${i['championships']['year']}" ==
           "${championshipsData[value - 1]['name']} ${championshipsData[value - 1]['year']}") {
         championshipResults.add(i);
@@ -271,7 +266,6 @@ class AppCubit extends Cubit<AppStates> {
         log(i['users']['full_name']
             .contains(swimmerSearchController.text)
             .toString());
-        print(swimmerSearchController.text);
         if (i['users']['full_name']
             .toLowerCase()
             .contains(swimmerSearchController.text.toLowerCase())) {
@@ -374,7 +368,7 @@ class AppCubit extends Cubit<AppStates> {
       int x = 1;
       eventsData = value;
       uneditedEvents = value;
-      events.add(DropdownMenuItem(
+      events.add(const DropdownMenuItem(
         value: 0,
         child: Text('...'),
       ));
@@ -451,15 +445,102 @@ class AppCubit extends Cubit<AppStates> {
     emit(AppChangeBottomSheetState());
   }
 
+  List<DropdownMenuItem<int>> dropLocations = [];
+  List locations = [];
+  void getLocations() {
+    supabase
+        .from("training_locations")
+        .select("id,location,maps")
+        .then((value) {
+      locations = value;
+      int x = 0;
+      value.forEach((element) {
+        dropLocations.add(DropdownMenuItem(
+          value: x,
+          child: Text(element['location']),
+        ));
+        x += 1;
+      });
+    });
+  }
+
   int dropDownValue = 0;
   void weekDaysDropDown({required int value}) {
     dropDownValue = value;
     emit(AddTrainingDropDownState());
   }
 
-  String? rad;
+  int? locationdropDownValue = 0;
+  void locationDropDown({required int? value}) {
+    locationdropDownValue = value;
+    emit(AddTrainingDropDownState());
+  }
+
+  dynamic rad = 0;
+  bool isRepeat = true;
   void radioButton(value) {
     rad = value;
+    if (value == 0) {
+      isRepeat = true;
+    } else {
+      isRepeat = false;
+    }
     emit(AddTrainingRadioState());
   }
+
+  void addOneTraining({required date, required time, required location}) {
+    if (isRepeat) {
+      DateTime? nextweekday;
+      DateTime now = DateTime.now();
+      if (date == 'Sunday') {
+        nextweekday =
+            now.add(Duration(days: (DateTime.sunday - now.weekday) % 7));
+      } else if (date == 'Monday') {
+        nextweekday =
+            now.add(Duration(days: (DateTime.monday - now.weekday) % 7));
+      } else if (date == 'Tuesday') {
+        nextweekday =
+            now.add(Duration(days: (DateTime.tuesday - now.weekday) % 7));
+      } else if (date == 'Wednesday') {
+        nextweekday =
+            now.add(Duration(days: (DateTime.wednesday - now.weekday) % 7));
+      } else if (date == 'Thursday') {
+        nextweekday =
+            now.add(Duration(days: (DateTime.thursday - now.weekday) % 7));
+      } else if (date == 'Firday') {
+        nextweekday =
+            now.add(Duration(days: (DateTime.friday - now.weekday) % 7));
+      } else if (date == 'Saturday') {
+        nextweekday =
+            now.add(Duration(days: (DateTime.saturday - now.weekday) % 7));
+      }
+
+      // DateTime nextweekday =
+      //     now.add(Duration(days: (DateTime. - now.weekday) % 7));
+
+      for (int i = 0; i < 250; i++) {
+        supabase
+            .from("trainings")
+            .insert({
+              'date': nextweekday!.add(Duration(days: 7 * i)).toString(),
+              "team": teamCode,
+              "location": location
+            })
+            .then((value) => print("done"))
+            .catchError((onError) {
+              print(onError.toString());
+            });
+      }
+    } else {
+      supabase.from("trainings").insert({
+        'date': DateFormat("yyyy-MM-dd hh:mm").parse("$date $time").toString(),
+        "team": teamCode,
+        "location": location
+      }).then((value) {
+        getTraining();
+      }).catchError((onError) => print(onError.toString()));
+    }
+  }
+
+  // void addRepeatTraining({}){}
 }

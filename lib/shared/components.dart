@@ -58,23 +58,24 @@ Widget textfield({
   required IconData prefix,
   String? hint,
   required bool obscure,
-}) =>
-    TextFormField(
-      validator: validate,
-      controller: controller,
-      keyboardType: type,
-      obscureText: obscure,
-      onFieldSubmitted: onSubmit,
-      onChanged: onChange,
-      onTap: onTap,
-      decoration: InputDecoration(
-        labelStyle: const TextStyle(color: Colors.black),
-        labelText: label,
-        hintText: hint,
-        border: const OutlineInputBorder(),
-        prefixIcon: Icon(prefix),
-      ),
-    );
+}) {
+  return TextFormField(
+    validator: validate,
+    controller: controller,
+    keyboardType: type,
+    obscureText: obscure,
+    onFieldSubmitted: onSubmit,
+    onChanged: onChange,
+    onTap: onTap,
+    decoration: InputDecoration(
+      labelStyle: const TextStyle(color: Colors.black),
+      labelText: label,
+      hintText: hint,
+      border: const OutlineInputBorder(),
+      prefixIcon: Icon(prefix),
+    ),
+  );
+}
 
 Widget trainingCard({context, required item, cubit}) {
   return InkWell(
@@ -147,7 +148,7 @@ Widget trainingCard({context, required item, cubit}) {
               height: 5,
             ),
             Text(
-              item['location'],
+              item["training_locations"]['location'],
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
             const SizedBox(
