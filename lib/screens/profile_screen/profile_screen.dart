@@ -26,71 +26,91 @@ class ProfileScreen extends StatelessWidget {
           var cubit = AppCubit.get(context);
           return SafeArea(
               child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(0.0),
             child: Column(
               children: [
+                // const SizedBox(
+                //   width: 25,
+                // ),
+                Stack(
+                  alignment: Alignment.bottomLeft,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 55),
+                      height: 100,
+                      color: Colors.blue,
+                    ),
+                    Padding(
+                        padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                cubit.getprofileImage();
+                              },
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  const CircleAvatar(
+                                    backgroundColor: Colors.blue,
+                                    radius: 50,
+                                  ),
+                                  Stack(
+                                    alignment: Alignment.bottomRight,
+                                    children: [
+                                      CircleAvatar(
+                                        backgroundColor: Colors.blue,
+                                        radius: 50,
+                                        child: ClipOval(
+                                          child: SizedBox.fromSize(
+                                            size: const Size.fromRadius(48),
+                                            child: CachedNetworkImage(
+                                              imageUrl:
+                                                  userData['profile_picture'],
+                                              placeholder: (context, url) =>
+                                                  const CircularProgressIndicator(),
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const Icon(
+                                        Icons.edit,
+                                        size: 20,
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "${toBeginningOfSentenceCase(userData['full_name'])}",
+                                  style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                                Text(
+                                  "${duration.years} Years Old",
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.grey[500]),
+                                )
+                              ],
+                            )
+                          ],
+                        ))
+                  ],
+                ),
                 const SizedBox(
                   height: 20,
                 ),
-                Row(
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        cubit.getprofileImage();
-                      },
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          const CircleAvatar(
-                            radius: 40,
-                          ),
-                          Stack(
-                            alignment: Alignment.bottomRight,
-                            children: [
-                              CircleAvatar(
-                                radius: 38,
-                                child: ClipOval(
-                                  child: SizedBox.fromSize(
-                                    size: const Size.fromRadius(48),
-                                    child: CachedNetworkImage(
-                                      imageUrl: userData['profile_picture'],
-                                      placeholder: (context, url) =>
-                                          const CircularProgressIndicator(),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const Icon(
-                                Icons.edit,
-                                size: 20,
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "${toBeginningOfSentenceCase(userData['full_name'])}",
-                          style:const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.w600),
-                        ),
-                        Text(
-                          "${duration.years} Years Old",
-                          style:
-                              TextStyle(fontSize: 16, color: Colors.grey[500]),
-                        )
-                      ],
-                    )
-                  ],
-                )
               ],
             ),
           ));

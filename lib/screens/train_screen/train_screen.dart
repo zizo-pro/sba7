@@ -23,9 +23,12 @@ class TrainScreen extends StatelessWidget {
         builder: (context, state) {
           var cubit = AppCubit.get(context);
           return ConditionalBuilder(
-            condition: cubit.upcomingTrain.isNotEmpty || cubit.beforeTrain.isNotEmpty,
-            fallback: (context) => Center(child: CircularProgressIndicator(),),
-            builder:(context) =>  DefaultTabController(
+            condition:
+                cubit.upcomingTrain.isNotEmpty || cubit.beforeTrain.isNotEmpty,
+            fallback: (context) => const Center(
+              child: CircularProgressIndicator(),
+            ),
+            builder: (context) => DefaultTabController(
                 length: 2,
                 child: Scaffold(
                   key: scaffoldkey,
@@ -33,20 +36,20 @@ class TrainScreen extends StatelessWidget {
                     onPressed: () async {
                       if (cubit.isBottomSheetShown) {
                         cubit.bottomSheet(isShow: false, icon: Icons.edit);
-                      if (cubit.isRepeat){
+                        if (cubit.isRepeat) {
                           cubit.addOneTraining(
                               date: weekdays[cubit.dropDownValue],
                               time: timeController.text,
-                              location: cubit.locations[cubit.locationdropDownValue as int]
-                                  ['id']);
-                        }else{
+                              location: cubit.locations[
+                                  cubit.locationdropDownValue as int]['id']);
+                        } else {
                           cubit.addOneTraining(
                               date: dateController.text,
                               time: timeController.text,
                               location: cubit.locations[
                                   cubit.locationdropDownValue as int]['id']);
                         }
-                        
+
                         Navigator.pop(context);
                       } else {
                         cubit.bottomSheet(isShow: true, icon: Icons.add);
@@ -83,17 +86,18 @@ class TrainScreen extends StatelessWidget {
                                                       border: OutlineInputBorder(
                                                           borderRadius:
                                                               BorderRadius.all(
-                                                                  Radius.circular(
-                                                                      6)))),
-                                                  value:
-                                                      cubit.locationdropDownValue,
+                                                                  Radius
+                                                                      .circular(
+                                                                          6)))),
+                                                  value: cubit
+                                                      .locationdropDownValue,
                                                   items: cubit.dropLocations,
                                                   onChanged: (value) {
                                                     cubit.locationDropDown(
                                                         value: value);
                                                   }),
                                             ),
-          
+
                                             Row(
                                               children: [
                                                 Expanded(
@@ -146,7 +150,8 @@ class TrainScreen extends StatelessWidget {
                                                 condition: cubit.isRepeat,
                                                 fallback: (context) => textfield(
                                                     controller: dateController,
-                                                    type: TextInputType.datetime,
+                                                    type:
+                                                        TextInputType.datetime,
                                                     prefix: Icons
                                                         .calendar_month_outlined,
                                                     label: "Date",
@@ -160,10 +165,10 @@ class TrainScreen extends StatelessWidget {
                                                             initialDate:
                                                                 DateTime.now())
                                                         .then((value) =>
-                                                            dateController
-                                                                .text = DateFormat(
-                                                                    'yyyy-MM-d')
-                                                                .format(value!))),
+                                                            dateController.text =
+                                                                DateFormat('yyyy-MM-d')
+                                                                    .format(
+                                                                        value!))),
                                                 builder: (context) =>
                                                     DropdownButtonFormField(
                                                         decoration: const InputDecoration(
@@ -177,8 +182,9 @@ class TrainScreen extends StatelessWidget {
                                                             cubit.dropDownValue,
                                                         items: ites,
                                                         onChanged: (value) {
-                                                          cubit.weekDaysDropDown(
-                                                              value: value);
+                                                          cubit
+                                                              .weekDaysDropDown(
+                                                                  value: value);
                                                         }),
                                               ),
                                             ),
@@ -200,7 +206,9 @@ class TrainScreen extends StatelessWidget {
                   appBar: AppBar(
                     toolbarHeight: 10,
                     bottom: const TabBar(padding: EdgeInsets.all(0), tabs: [
-                      Tab(icon: Icon(Icons.upcoming_outlined), text: "upcoming"),
+                      Tab(
+                          icon: Icon(Icons.upcoming_outlined),
+                          text: "upcoming"),
                       Tab(icon: Icon(Icons.history), text: "History")
                     ]),
                   ),
@@ -210,7 +218,8 @@ class TrainScreen extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: ConditionalBuilder(
-                          condition: cubit.upcomingTrain.isNotEmpty,
+                          condition: cubit.upcomingTrain.isNotEmpty ||
+                              cubit.todayTrain.isNotEmpty,
                           fallback: (context) => Center(
                             child: Text(
                               "No Upcoming Trainings",
@@ -218,16 +227,68 @@ class TrainScreen extends StatelessWidget {
                                   fontSize: 18, color: Colors.grey[500]),
                             ),
                           ),
-                          builder: (context) => ListView.separated(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemBuilder: (context, index) => trainingCard(
-                                  item: cubit.upcomingTrain[index],
-                                  cubit: cubit,
-                                  context: context),
-                              separatorBuilder: (context, index) =>
-                                  const SizedBox(height: 20),
-                              itemCount: cubit.upcomingTrain.length),
+                          builder: (context) => Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text("Today",
+                                    style: TextStyle(
+                                        color: Colors.grey, fontSize: 16)),
+                                if (cubit.todayTrain.isEmpty)
+                                  const Center(
+                                      child: Text(
+                                    "No Trainings Today",
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500),
+                                  )),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                
+                                ListView.separated(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemBuilder: (context, index) =>
+                                        trainingCard(
+                                            item: cubit.todayTrain[index],
+                                            cubit: cubit,
+                                            context: context),
+                                    separatorBuilder: (context, index) =>
+                                        const SizedBox(height: 20),
+                                    itemCount: cubit.todayTrain.length),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                const Text("Upcoming",
+                                    style: TextStyle(
+                                        color: Colors.grey, fontSize: 16)),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                if (cubit.upcomingTrain.isEmpty)
+                                  const Center(
+                                      child: Text(
+                                    "No Upcoming Trainings",
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500),
+                                  )),
+                                ListView.separated(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemBuilder: (context, index) =>
+                                        trainingCard(
+                                            item: cubit.upcomingTrain[index],
+                                            cubit: cubit,
+                                            context: context),
+                                    separatorBuilder: (context, index) =>
+                                        const SizedBox(height: 20),
+                                    itemCount: cubit.upcomingTrain.length),
+                              ]),
                         ),
                       ),
                     ),
@@ -259,27 +320,7 @@ class TrainScreen extends StatelessWidget {
                   ]),
                 )),
           );
-          // return Scaffold(
-          //   appBar: AppBar(),
-          //   body: SingleChildScrollView(
-          //     physics: const BouncingScrollPhysics(),
-          //     child: Padding(
-          //       padding: const EdgeInsets.all(16.0),
-          //       child: Column(children: [
-          //         const SizedBox(
-          //           height: 15,
-          //         ),
-          //         ListView.separated(
-          //             shrinkWrap: true,
-          //             physics: const NeverScrollableScrollPhysics(),
-          //             itemBuilder: (context, index) => TrainingCard(cubit: cubit),
-          //             separatorBuilder: (context, index) =>
-          //                 const SizedBox(height: 10),
-          //             itemCount: 10)
-          //       ]),
-          //     ),
-          //   ),
-          // );
+
         });
   }
 }

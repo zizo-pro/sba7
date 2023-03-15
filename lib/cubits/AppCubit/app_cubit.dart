@@ -50,16 +50,27 @@ class AppCubit extends Cubit<AppStates> {
 
   List<dynamic> upcomingTrain = [];
   List<dynamic> beforeTrain = [];
+  List<dynamic> todayTrain = [];
   void getTraining() async {
     beforeTrain = [];
+    todayTrain = [];
     upcomingTrain = [];
     var l = await supabase
         .from('trainings')
         .select('id,team,date,training_locations(id,location,maps)')
-        .eq('team', userData["team_code"]).order('date',ascending: true);
+        .eq('team', userData["team_code"])
+        .order('date', ascending: true);
     l.forEach((element) {
       if (DateTime.parse(element['date']).isAfter(DateTime.now())) {
-        upcomingTrain.add(element);
+        if (DateTime.parse(element['date']).day == DateTime.now().day &&
+            DateTime.parse(element['date']).month == DateTime.now().month &&
+            DateTime.parse(element['date']).month == DateTime.now().month &&
+            DateTime.parse(element['date']).year == DateTime.now().year &&
+            DateTime.parse(element['date']).hour >= DateTime.now().hour) {
+          todayTrain.add(element);
+        } else {
+          upcomingTrain.add(element);
+        }
       } else if (DateTime.parse(element['date']).isBefore(DateTime.now())) {
         beforeTrain.add(element);
       }
@@ -207,8 +218,7 @@ class AppCubit extends Cubit<AppStates> {
                   log(onError.toString());
                 });
           });
-        } else {
-        }
+        } else {}
       }).catchError((onError) => print(onError.toString()));
       Navigator.pop(context);
       Navigator.pop(context);
