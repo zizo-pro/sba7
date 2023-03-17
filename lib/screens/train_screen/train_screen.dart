@@ -34,171 +34,183 @@ class TrainScreen extends StatelessWidget {
                   key: scaffoldkey,
                   floatingActionButton: FloatingActionButton(
                     onPressed: () async {
-                      if (cubit.isBottomSheetShown) {
-                        cubit.bottomSheet(isShow: false, icon: Icons.edit);
-                        if (cubit.isRepeat) {
-                          cubit.addOneTraining(
-                              date: weekdays[cubit.dropDownValue],
-                              time: timeController.text,
-                              location: cubit.locations[
-                                  cubit.locationdropDownValue as int]['id']);
+                      if (userData['user_type'] == "Coach") {
+                        if (cubit.isBottomSheetShown) {
+                          cubit.bottomSheet(isShow: false, icon: Icons.edit);
+                          if (cubit.isRepeat) {
+                            cubit.addOneTraining(
+                                date: weekdays[cubit.dropDownValue],
+                                time: timeController.text,
+                                location: cubit.locations[
+                                    cubit.locationdropDownValue as int]['id']);
+                          } else {
+                            cubit.addOneTraining(
+                                date: dateController.text,
+                                time: timeController.text,
+                                location: cubit.locations[
+                                    cubit.locationdropDownValue as int]['id']);
+                          }
+
+                          Navigator.pop(context);
                         } else {
-                          cubit.addOneTraining(
-                              date: dateController.text,
-                              time: timeController.text,
-                              location: cubit.locations[
-                                  cubit.locationdropDownValue as int]['id']);
-                        }
-
-                        Navigator.pop(context);
-                      } else {
-                        cubit.bottomSheet(isShow: true, icon: Icons.add);
-                        scaffoldkey.currentState!
-                            .showBottomSheet(
-                              elevation: 20,
-                              (context) {
-                                return BlocConsumer<AppCubit, AppStates>(
-                                  listener: (context, state) {},
-                                  builder: (context, state) => Container(
-                                    height: 350,
-                                    width: double.infinity,
-                                    child: Form(
-                                      key: formkey,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(16.0),
-                                        child: Column(
-                                          children: [
-                                            // textfield(
-                                            //     controller: locationController,
-                                            //     type: TextInputType.name,
-                                            //     prefix:
-                                            //         Icons.location_on_outlined,
-                                            //     obscure: false,
-                                            //     label: "Location"),
-                                            // const SizedBox(
-                                            //   height: 20,
-                                            // ),
-                                            Container(
-                                              width: double.infinity,
-                                              child: DropdownButtonFormField(
-                                                  decoration: const InputDecoration(
-                                                      label: Text("Location"),
-                                                      border: OutlineInputBorder(
-                                                          borderRadius:
-                                                              BorderRadius.all(
-                                                                  Radius
-                                                                      .circular(
-                                                                          6)))),
-                                                  value: cubit
-                                                      .locationdropDownValue,
-                                                  items: cubit.dropLocations,
-                                                  onChanged: (value) {
-                                                    cubit.locationDropDown(
-                                                        value: value);
-                                                  }),
-                                            ),
-
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                  child: RadioListTile(
-                                                    contentPadding:
-                                                        const EdgeInsets
-                                                                .symmetric(
-                                                            horizontal: 2),
-                                                    value: 0,
-                                                    title: const Text("Repeat"),
-                                                    groupValue: cubit.rad,
-                                                    onChanged: (value) {
-                                                      cubit.radioButton(value);
-                                                    },
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  child: RadioListTile(
-                                                    value: 1,
-                                                    title: const Text("Once"),
-                                                    groupValue: cubit.rad,
-                                                    onChanged: (value) {
-                                                      cubit.radioButton(value);
-                                                    },
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            textfield(
-                                                controller: timeController,
-                                                type: TextInputType.datetime,
-                                                prefix: Icons.alarm,
-                                                label: "Time",
-                                                obscure: false,
-                                                onTap: () => showTimePicker(
-                                                        context: context,
-                                                        initialTime:
-                                                            TimeOfDay.now())
-                                                    .then((value) =>
-                                                        timeController.text =
-                                                            value!
-                                                                .format(context)
-                                                                .toString())),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            Container(
-                                              width: double.infinity,
-                                              child: ConditionalBuilder(
-                                                condition: cubit.isRepeat,
-                                                fallback: (context) => textfield(
-                                                    controller: dateController,
-                                                    type:
-                                                        TextInputType.datetime,
-                                                    prefix: Icons
-                                                        .calendar_month_outlined,
-                                                    label: "Date",
-                                                    obscure: false,
-                                                    onTap: () => showDatePicker(
-                                                            context: context,
-                                                            firstDate: DateTime(
-                                                                2000, 01, 01),
-                                                            lastDate: DateTime(
-                                                                2030, 12, 31),
-                                                            initialDate:
-                                                                DateTime.now())
-                                                        .then((value) =>
-                                                            dateController.text =
-                                                                DateFormat('yyyy-MM-d')
-                                                                    .format(
-                                                                        value!))),
-                                                builder: (context) =>
-                                                    DropdownButtonFormField(
-                                                        decoration: const InputDecoration(
-                                                            label: Text("Day"),
-                                                            border: OutlineInputBorder(
-                                                                borderRadius: BorderRadius
+                          cubit.bottomSheet(isShow: true, icon: Icons.add);
+                          scaffoldkey.currentState!
+                              .showBottomSheet(
+                                elevation: 20,
+                                (context) {
+                                  return BlocConsumer<AppCubit, AppStates>(
+                                    listener: (context, state) {},
+                                    builder: (context, state) => Container(
+                                      height: 350,
+                                      width: double.infinity,
+                                      child: Form(
+                                        key: formkey,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(16.0),
+                                          child: Column(
+                                            children: [
+                                              // textfield(
+                                              //     controller: locationController,
+                                              //     type: TextInputType.name,
+                                              //     prefix:
+                                              //         Icons.location_on_outlined,
+                                              //     obscure: false,
+                                              //     label: "Location"),
+                                              // const SizedBox(
+                                              //   height: 20,
+                                              // ),
+                                              Container(
+                                                width: double.infinity,
+                                                child: DropdownButtonFormField(
+                                                    decoration: const InputDecoration(
+                                                        label: Text("Location"),
+                                                        border: OutlineInputBorder(
+                                                            borderRadius:
+                                                                BorderRadius
                                                                     .all(Radius
                                                                         .circular(
                                                                             6)))),
-                                                        value:
-                                                            cubit.dropDownValue,
-                                                        items: ites,
-                                                        onChanged: (value) {
-                                                          cubit
-                                                              .weekDaysDropDown(
-                                                                  value: value);
-                                                        }),
+                                                    value: cubit
+                                                        .locationdropDownValue,
+                                                    items: cubit.dropLocations,
+                                                    onChanged: (value) {
+                                                      cubit.locationDropDown(
+                                                          value: value);
+                                                    }),
                                               ),
-                                            ),
-                                          ],
+
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: RadioListTile(
+                                                      contentPadding:
+                                                          const EdgeInsets
+                                                                  .symmetric(
+                                                              horizontal: 2),
+                                                      value: 0,
+                                                      title:
+                                                          const Text("Repeat"),
+                                                      groupValue: cubit.rad,
+                                                      onChanged: (value) {
+                                                        cubit
+                                                            .radioButton(value);
+                                                      },
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    child: RadioListTile(
+                                                      value: 1,
+                                                      title: const Text("Once"),
+                                                      groupValue: cubit.rad,
+                                                      onChanged: (value) {
+                                                        cubit
+                                                            .radioButton(value);
+                                                      },
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              textfield(
+                                                  controller: timeController,
+                                                  type: TextInputType.datetime,
+                                                  prefix: Icons.alarm,
+                                                  label: "Time",
+                                                  obscure: false,
+                                                  onTap: () => showTimePicker(
+                                                          context: context,
+                                                          initialTime:
+                                                              TimeOfDay.now())
+                                                      .then((value) =>
+                                                          timeController.text =
+                                                              value!
+                                                                  .format(
+                                                                      context)
+                                                                  .toString())),
+                                              const SizedBox(
+                                                height: 10,
+                                              ),
+                                              Container(
+                                                width: double.infinity,
+                                                child: ConditionalBuilder(
+                                                  condition: cubit.isRepeat,
+                                                  fallback: (context) => textfield(
+                                                      controller:
+                                                          dateController,
+                                                      type: TextInputType
+                                                          .datetime,
+                                                      prefix: Icons
+                                                          .calendar_month_outlined,
+                                                      label: "Date",
+                                                      obscure: false,
+                                                      onTap: () => showDatePicker(
+                                                              context: context,
+                                                              firstDate: DateTime(
+                                                                  2000, 01, 01),
+                                                              lastDate: DateTime(
+                                                                  2030, 12, 31),
+                                                              initialDate:
+                                                                  DateTime
+                                                                      .now())
+                                                          .then((value) =>
+                                                              dateController.text =
+                                                                  DateFormat('yyyy-MM-d').format(value!))),
+                                                  builder: (context) =>
+                                                      DropdownButtonFormField(
+                                                          decoration: const InputDecoration(
+                                                              label:
+                                                                  Text("Day"),
+                                                              border: OutlineInputBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius.all(
+                                                                          Radius.circular(
+                                                                              6)))),
+                                                          value: cubit
+                                                              .dropDownValue,
+                                                          items: ites,
+                                                          onChanged: (value) {
+                                                            cubit
+                                                                .weekDaysDropDown(
+                                                                    value:
+                                                                        value);
+                                                          }),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                );
-                              },
-                            )
-                            .closed
-                            .then((value) => cubit.bottomSheet(
-                                isShow: false, icon: Icons.edit));
+                                  );
+                                },
+                              )
+                              .closed
+                              .then((value) => cubit.bottomSheet(
+                                  isShow: false, icon: Icons.edit));
+                        }
+                      } else {
+                        showToast(
+                            msg: "you're not Authorized",
+                            state: ToastStates.ERROR);
                       }
                     },
                     child: Icon(cubit.fabIcon),
@@ -245,7 +257,6 @@ class TrainScreen extends StatelessWidget {
                                 const SizedBox(
                                   height: 15,
                                 ),
-                                
                                 ListView.separated(
                                     shrinkWrap: true,
                                     physics:
@@ -320,7 +331,6 @@ class TrainScreen extends StatelessWidget {
                   ]),
                 )),
           );
-
         });
   }
 }
