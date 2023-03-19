@@ -35,3 +35,5 @@ class AddTrainingDropDownState extends AppStates{}
 
 class AddTrainingRadioState extends AppStates{}
 
+class AcceptSwimmerState extends AppStates{}
+

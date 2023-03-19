@@ -12,6 +12,7 @@ import 'package:sba7/screens/train_info_screen/train_info_screen.dart';
 import 'package:sba7/shared/cache_helper.dart';
 import 'package:restart_app/restart_app.dart';
 import 'package:sba7/shared/constants.dart';
+import 'package:sba7/shared/custom_icons.dart';
 
 void navigateTo(context, dynamic screen) =>
     Navigator.push(context, MaterialPageRoute(builder: ((context) => screen)));
@@ -523,4 +524,183 @@ Color chooseToastColor(ToastStates state) {
       break;
   }
   return color;
+}
+
+Widget adminGridItem(
+    {required Function()? onTap,
+    required IconData? icon,
+    required String label}) {
+  return InkWell(
+    onTap: onTap,
+    child: GestureDetector(
+      child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(color: Colors.white, boxShadow: [
+              BoxShadow(
+                  color: Colors.grey[400] as Color,
+                  blurRadius: 6,
+                  blurStyle: BlurStyle.outer,
+                  spreadRadius: 0,
+                  offset: const Offset(-1, -1))
+            ]),
+            height: 150,
+            child: Column(
+              children: [
+                Icon(
+                  icon,
+                  color: Colors.blue,
+                  size: 60,
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Container(
+                  height: 1,
+                  color: Colors.black,
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  label,
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.w600),
+                )
+              ],
+            ),
+          )),
+    ),
+  );
+}
+
+Widget swimmerGridItem({required userData, required onTap}) {
+  return InkWell(
+    onTap: () {},
+    child: GestureDetector(
+      child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(color: Colors.white, boxShadow: [
+              BoxShadow(
+                  color: Colors.grey[400] as Color,
+                  blurRadius: 6,
+                  blurStyle: BlurStyle.outer,
+                  spreadRadius: 0,
+                  offset: const Offset(-1, -1))
+            ]),
+            height: 250,
+            child: Column(
+              children: [
+                Container(
+                  height: 110,
+                  child: CircleAvatar(
+                    radius: 55,
+                    child: ClipOval(
+                        child: SizedBox.fromSize(
+                      size: const Size.fromRadius(55),
+                      child: CachedNetworkImage(
+                          imageUrl: userData['profile_picture'],
+                          fit: BoxFit.fill),
+                    )),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  userData["full_name"],
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.w600),
+                ),
+                Text(
+                  DateTime.parse(userData['birth_date']).year.toString(),
+                  style: TextStyle(),
+                ),
+                // const Spacer(),
+              ],
+            ),
+          )),
+    ),
+  );
+}
+
+Widget nonacceptSwimmers({required swimmerData,required index}) {
+  return BlocConsumer<AppCubit,AppStates>(
+    listener: (context, state) {
+      
+    },
+    builder:(context, state)   {
+      var cubit= AppCubit.get(context);
+      return Container(
+      padding: const EdgeInsets.all(8),
+      height: 80,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey[400] as Color,
+            blurStyle: BlurStyle.outer,
+            spreadRadius: 0.6,
+            blurRadius: 7,
+          )
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(6),
+        child: Row(children: [
+          CircleAvatar(
+              radius: 27,
+              child: ClipOval(
+                child: SizedBox.fromSize(
+                  size: const Size.fromRadius(80),
+                  child: CachedNetworkImage(
+                    imageUrl: swimmerData['profile_picture'],
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              )),
+          const SizedBox(width: 10),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                toBeginningOfSentenceCase(swimmerData["full_name"].toString())
+                    .toString(),
+                style: const TextStyle(fontSize: 16),
+              ),
+              Text(
+                DateTime.parse(swimmerData['birth_date']).year.toString(),
+                style: TextStyle(color: Colors.grey[500]),
+              ),
+            ],
+          ),
+          const Spacer(),
+          CircleAvatar(
+            backgroundColor: Colors.green,
+            radius: 16,
+            child: IconButton(
+                iconSize: 16,
+                color: Colors.white,
+                onPressed: () {cubit.acceptSwimmer(id: swimmerData['uid'],isAccepted: true,index: index);},
+                icon: const Icon(Icons.check)),
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          CircleAvatar(
+            backgroundColor: Colors.red,
+            radius: 16,
+            child: IconButton(
+                iconSize: 16,
+                color: Colors.white,
+                onPressed: () {cubit.acceptSwimmer(id: swimmerData['uid'],isAccepted: false,index: index);},
+                icon: const Icon(Icons.close)),
+          ),
+        ]),
+      ),
+    );}  );
 }

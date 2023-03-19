@@ -63,7 +63,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(
             create: (context) => AppCubit()
               ..getTraining()
-              ..getUserData(email: userData['email'])
+              ..getUserData(email: userData['email'])..init()
               ..getLocations(),
           )
         ],

@@ -11,9 +11,11 @@ import 'package:intl/intl.dart';
 import 'package:sba7/cubits/AppCubit/app_states.dart';
 import 'package:sba7/screens/championship_screen/championship_screen.dart';
 import 'package:sba7/screens/profile_screen/profile_screen.dart';
+import 'package:sba7/screens/swimmers_admin_screen/swimmer_admin_screen.dart';
 import 'package:sba7/screens/train_screen/train_screen.dart';
 import 'package:sba7/shared/cache_helper.dart';
 import 'package:sba7/shared/constants.dart';
+import 'package:sba7/shared/custom_icons.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AppCubit extends Cubit<AppStates> {
@@ -26,6 +28,23 @@ class AppCubit extends Cubit<AppStates> {
     currentIndex = 0;
   }
 
+  void init() {
+    if (userData['user_type'] == "Coach") {
+      screens.insert(1, const SwimmerAdminScreen());
+      bottomNavItems.insert(
+          1,
+          const BottomNavigationBarItem(
+              icon: Icon(Icons.admin_panel_settings_outlined), label: "Admin"));
+    }
+  }
+
+  List<BottomNavigationBarItem> bottomNavItems = [
+    const BottomNavigationBarItem(icon: Icon(Icons.home), label: "Trainings"),
+    const BottomNavigationBarItem(
+        icon: Icon(CustomIcons.medal), label: "Championships"),
+    const BottomNavigationBarItem(
+        icon: Icon(Icons.person_rounded), label: "Profile"),
+  ];
   List screens = [TrainScreen(), const ChampionshipScreen(), ProfileScreen()];
   int currentIndex = 0;
   void changeBottomNav({required int value}) {
@@ -125,19 +144,32 @@ class AppCubit extends Cubit<AppStates> {
 // Attendance area
   Color? wrongColor = Colors.grey;
   Color? rightColor = Colors.grey;
-
+  List notAcc = [];
   void getSwimmers() async {
     swimmerNames = [];
+    notAcc = [];
+    swimmers = [];
     var swims = await supabase
         .from('users')
         .select()
         .eq('user_type', "Swimmer")
         .eq("team_code", userData["team_code"]);
     // log(swims.toString());
-    swimmers = swims;
-    for (var i in swims) {
-      swimmerNames
-          .add("${i['full_name']} ${DateTime.parse(i['birth_date']).year}");
+    if (userData['user_type'] == 'Coach') {
+      for (var i in swims) {
+        if (i['isAccepted'] == false) {
+          notAcc.add(i);
+        } else {
+          swimmerNames
+              .add("${i['full_name']} ${DateTime.parse(i['birth_date']).year}");
+          swimmers.add(i);
+        }
+      }
+    } else {
+      for (var i in swims) {
+        swimmerNames
+            .add("${i['full_name']} ${DateTime.parse(i['birth_date']).year}");
+      }
     }
   }
 
@@ -552,5 +584,25 @@ class AppCubit extends Cubit<AppStates> {
     }
   }
 
-  // void addRepeatTraining({}){}
+  void acceptSwimmer({required isAccepted, required id, index}) {
+    if (isAccepted) {
+      supabase
+          .from('users')
+          .update({'isAccepted': true})
+          .eq('uid', id)
+          .then((value) => print("done"))
+          .catchError((onError) {
+            print(onError.toString());
+          });
+    } else {
+      supabase.from('users').delete().eq('uid', id)
+          .then((value) => print("done"))
+          .catchError((onError) {
+        print(onError.toString());
+      });
+      ;
+    }
+    notAcc.removeAt(index);
+    emit(AcceptSwimmerState());
+  }
 }

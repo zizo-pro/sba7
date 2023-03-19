@@ -6,8 +6,8 @@ import 'package:sba7/cubits/AppCubit/app_states.dart';
 import 'package:sba7/shared/constants.dart';
 
 class MyHomePage extends StatelessWidget {
-  final userEmail;
-  MyHomePage({super.key, this.userEmail});
+  final String? userEmail;
+  const MyHomePage({super.key, required this.userEmail});
 
   @override
   Widget build(BuildContext context) {
@@ -28,17 +28,14 @@ class MyHomePage extends StatelessWidget {
           builder: (context) => Scaffold(
             body: cubit.screens[cubit.currentIndex],
             bottomNavigationBar: BottomNavigationBar(
+                unselectedItemColor: Colors.grey,
+                selectedItemColor: Colors.black,
+                unselectedFontSize: 12,
                 onTap: (value) {
                   cubit.changeBottomNav(value: value);
                 },
                 currentIndex: cubit.currentIndex,
-                items: const [
-                  BottomNavigationBarItem(
-                      icon: Icon(Icons.home), label: "Trainings"),
-                      BottomNavigationBarItem(icon: Icon(Icons.emoji_events),label: "Championships"),
-                  BottomNavigationBarItem(
-                      icon: Icon(Icons.person_rounded), label: "Profile"),
-                ]),
+                items: cubit.bottomNavItems),
           ),
         );
       },
