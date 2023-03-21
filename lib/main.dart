@@ -9,6 +9,7 @@ import 'package:sba7/cubits/Login_Cubit/login_states.dart';
 import 'package:sba7/layout/home_layout.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:sba7/screens/login_screen/login_screen.dart';
+import 'package:sba7/screens/not_accepted_screen/not_accepted_screen.dart';
 import 'package:sba7/shared/bloc_observer.dart';
 import 'package:sba7/shared/cache_helper.dart';
 import 'package:sba7/shared/constants.dart';
@@ -36,7 +37,20 @@ void main() async {
     userData = json.decode(userdal);
   }
   if (token != null) {
-    widget = MyHomePage(userEmail: userData['email']);
+    await Supabase.instance.client.from("users").select().eq('uid', token).then(
+      (value) {
+        userData = value[0];
+      },
+    );
+    if (userData['user_type'] != "Coach") {
+      if (userData['isAccepted'] == true) {
+        widget = MyHomePage(userEmail: userData['email']);
+      } else {
+        widget = const NotAcceptedScreen();
+      }
+    } else {
+      widget = MyHomePage(userEmail: userData['email']);
+    }
   } else {
     widget = const LoginScreen();
   }
@@ -63,7 +77,8 @@ class MyApp extends StatelessWidget {
           BlocProvider(
             create: (context) => AppCubit()
               ..getTraining()
-              ..getUserData(email: userData['email'])..init()
+              ..getUserData(email: userData['email'])
+              ..init()
               ..getLocations(),
           )
         ],

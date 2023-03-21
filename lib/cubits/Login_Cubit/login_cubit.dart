@@ -11,6 +11,7 @@ import 'package:sba7/cubits/Login_Cubit/login_states.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sba7/layout/home_layout.dart';
 import 'package:sba7/models/user_model.dart';
+import 'package:sba7/screens/not_accepted_screen/not_accepted_screen.dart';
 import 'package:sba7/screens/register_screen/complete_regestiration_screen.dart';
 import 'package:sba7/shared/components.dart';
 import 'package:sba7/shared/constants.dart';
@@ -54,6 +55,8 @@ class LoginCubit extends Cubit<LoginStates> {
   Future<void> getUserData({required email}) async {
     var userDatal = await supabase.from("users").select().eq('email', email);
     CacheHelper.saveData(key: "userData", value: userDatal[0]);
+    // CacheHelper.saveData(key: "token", value: userDatal[0]['uid']);
+    token = userDatal[0]['uid'];
     userData = userDatal[0];
     emit(GetUserDataSuccessState());
   }
@@ -71,7 +74,15 @@ class LoginCubit extends Cubit<LoginStates> {
             userAuth = element['user_type'];
             teamCode = element['team_code'];
             getUserData(email: email).then((value) {
-              navigateAndFinish(context, MyHomePage(userEmail: email,));
+              if (userData['isAccepted']) {
+                navigateAndFinish(
+                    context,
+                    MyHomePage(
+                      userEmail: email,
+                    ));
+              } else {
+                navigateTo(context, const NotAcceptedScreen());
+              }
             });
 
             emit(LoginSuccessState());
@@ -207,7 +218,8 @@ class LoginCubit extends Cubit<LoginStates> {
           userAuth = userType;
           getUserData(email: uemail).then((value) {
             CacheHelper.saveData(key: "userAuth", value: userType);
-            navigateAndFinish(context, MyHomePage(userEmail: uemail,));
+              navigateTo(context, const NotAcceptedScreen());
+            
           });
         });
   }
@@ -229,9 +241,15 @@ class LoginCubit extends Cubit<LoginStates> {
     signInWithGoogle().then((value) {
       if (ems.contains(value.user!.email)) {
         if (emails[ems.indexOf(value.user!.email)]['isComplete'] == true) {
-          getUserData(email: value.user!.email).then(
-            (valu) => navigateAndFinish(context, MyHomePage(userEmail: value.user!.email)),
-          );
+          CacheHelper.saveData(key: "token", value: value.user!.uid);
+          getUserData(email: value.user!.email).then((valu) {
+            if (userData['isAccepted']) {
+              navigateAndFinish(
+                  context, MyHomePage(userEmail: value.user!.email));
+            } else {
+              navigateTo(context, const NotAcceptedScreen());
+            }
+          });
         } else {
           navigateTo(
               context,
