@@ -23,7 +23,7 @@ class SwimmerAdminScreen extends StatelessWidget {
               children: [
                 adminGridItem(
                     onTap: () {
-                      navigateTo(context, SwimmersScreen());
+                      navigateTo(context, const SwimmersScreen());
                     },
                     icon: CustomIcons.swimming,
                     label: "Swimmers"),

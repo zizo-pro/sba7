@@ -1,8 +1,6 @@
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sba7/cubits/AppCubit/app_cubit.dart';
-import 'package:sba7/cubits/AppCubit/app_states.dart';
 import 'package:sba7/shared/components.dart';
 import 'package:sba7/shared/constants.dart';
 
@@ -19,7 +17,6 @@ class AttendanceScreeen extends StatefulWidget {
 class _AttendanceScreeenState extends State<AttendanceScreeen> {
   @override
   Widget build(BuildContext context) {
-    // complete the attendance screen by joining the two tables akeed enta fakr y3ny :)
     return ConditionalBuilder(
       condition: widget.isAttendance,
       fallback: (context) => Scaffold(
@@ -68,8 +65,8 @@ class _AttendanceScreeenState extends State<AttendanceScreeen> {
                     });
                   },
                   icon: AppCubit.get(context).isEdit
-                      ? Icon(Icons.check)
-                      : Icon(Icons.edit))
+                      ?const Icon(Icons.check)
+                      :const Icon(Icons.edit))
             ]),
             body: SingleChildScrollView(
               child: Padding(

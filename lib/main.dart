@@ -42,14 +42,15 @@ void main() async {
         userData = value[0];
       },
     );
-    if (userData['user_type'] != "Coach") {
+    if (userData['user_type'] == "Coach") {
+      
+      widget = MyHomePage(userEmail: userData['email']);
+    } else {
       if (userData['isAccepted'] == true) {
         widget = MyHomePage(userEmail: userData['email']);
       } else {
         widget = const NotAcceptedScreen();
       }
-    } else {
-      widget = MyHomePage(userEmail: userData['email']);
     }
   } else {
     widget = const LoginScreen();

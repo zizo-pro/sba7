@@ -52,7 +52,7 @@ class LoginScreen extends StatelessWidget {
                     onPressed: () {
                       cubit.tt(context);
                     },
-                    child: Text("Sign in with Google")),
+                    child: const Text("Continue with Google")),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

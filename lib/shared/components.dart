@@ -1,6 +1,7 @@
+// ignore_for_file: constant_identifier_names, sized_box_for_whitespace
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -12,7 +13,6 @@ import 'package:sba7/screens/train_info_screen/train_info_screen.dart';
 import 'package:sba7/shared/cache_helper.dart';
 import 'package:restart_app/restart_app.dart';
 import 'package:sba7/shared/constants.dart';
-import 'package:sba7/shared/custom_icons.dart';
 
 void navigateTo(context, dynamic screen) =>
     Navigator.push(context, MaterialPageRoute(builder: ((context) => screen)));
@@ -617,7 +617,7 @@ Widget swimmerGridItem({required userData, required onTap}) {
                 ),
                 Text(
                   DateTime.parse(userData['birth_date']).year.toString(),
-                  style: TextStyle(),
+                  style: const TextStyle(),
                 ),
                 // const Spacer(),
               ],

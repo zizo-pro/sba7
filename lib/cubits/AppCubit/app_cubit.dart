@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, invalid_return_type_for_catch_error
 
 import 'dart:developer';
 import 'dart:io';
@@ -77,8 +77,8 @@ class AppCubit extends Cubit<AppStates> {
     var l = await supabase
         .from('trainings')
         .select('id,team,date,training_locations(id,location,maps)')
-        .eq('team', userData["team_code"])
-        .order('date', ascending: true);
+        .eq('team', userData["team_code"]).gte('date', DateTime.now())
+        .order('date', ascending: true).limit(25);
     l.forEach((element) {
       if (DateTime.parse(element['date']).isAfter(DateTime.now())) {
         if (DateTime.parse(element['date']).day == DateTime.now().day &&
@@ -600,7 +600,7 @@ class AppCubit extends Cubit<AppStates> {
           .catchError((onError) {
         print(onError.toString());
       });
-      ;
+      
     }
     notAcc.removeAt(index);
     emit(AcceptSwimmerState());

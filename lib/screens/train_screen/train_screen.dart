@@ -1,4 +1,7 @@
+// ignore_for_file: must_be_immutable, sized_box_for_whitespace
+
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -69,16 +72,6 @@ class TrainScreen extends StatelessWidget {
                                           padding: const EdgeInsets.all(16.0),
                                           child: Column(
                                             children: [
-                                              // textfield(
-                                              //     controller: locationController,
-                                              //     type: TextInputType.name,
-                                              //     prefix:
-                                              //         Icons.location_on_outlined,
-                                              //     obscure: false,
-                                              //     label: "Location"),
-                                              // const SizedBox(
-                                              //   height: 20,
-                                              // ),
                                               Container(
                                                 width: double.infinity,
                                                 child: DropdownButtonFormField(
@@ -98,7 +91,6 @@ class TrainScreen extends StatelessWidget {
                                                           value: value);
                                                     }),
                                               ),
-
                                               Row(
                                                 children: [
                                                   Expanded(
@@ -225,81 +217,86 @@ class TrainScreen extends StatelessWidget {
                     ]),
                   ),
                   body: TabBarView(children: [
-                    SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: ConditionalBuilder(
-                          condition: cubit.upcomingTrain.isNotEmpty ||
-                              cubit.todayTrain.isNotEmpty,
-                          fallback: (context) => Center(
-                            child: Text(
-                              "No Upcoming Trainings",
-                              style: TextStyle(
-                                  fontSize: 18, color: Colors.grey[500]),
+                    CupertinoScrollbar(
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: ConditionalBuilder(
+                            condition: cubit.upcomingTrain.isNotEmpty ||
+                                cubit.todayTrain.isNotEmpty,
+                            fallback: (context) => Center(
+                              child: Text(
+                                "No Upcoming Trainings",
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.grey[500]),
+                              ),
                             ),
+                            builder: (context) => Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text("Today",
+                                      style: TextStyle(
+                                          color: Colors.grey, fontSize: 16)),
+                                  if (cubit.todayTrain.isEmpty)
+                                    const Center(
+                                        child: Text(
+                                      "No Trainings Today",
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500),
+                                    )),
+                                  const SizedBox(
+                                    height: 15,
+                                  ),
+                                  ListView.separated(
+                                      shrinkWrap: true,
+                                      primary: false,
+                                      // physics:
+                                      //     const NeverScrollableScrollPhysics(),
+                                      itemBuilder: (context, index) =>
+                                          trainingCard(
+                                              item: cubit.todayTrain[index],
+                                              cubit: cubit,
+                                              context: context),
+                                      separatorBuilder: (context, index) =>
+                                          const SizedBox(height: 20),
+                                      itemCount: cubit.todayTrain.length),
+                                  const SizedBox(
+                                    height: 15,
+                                  ),
+                                  const Text("Upcoming",
+                                      style: TextStyle(
+                                          color: Colors.grey, fontSize: 16)),
+                                  const SizedBox(
+                                    height: 15,
+                                  ),
+                                  if (cubit.upcomingTrain.isEmpty)
+                                    const Center(
+                                        child: Text(
+                                      "No Upcoming Trainings",
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500),
+                                    )),
+                                  ListView.separated(
+                                      shrinkWrap: true,
+                                      
+                                      primary: false,
+                                      // physics:
+                                      //     const NeverScrollableScrollPhysics(),
+                                      itemBuilder: (context, index) =>
+                                          trainingCard(
+                                              item: cubit.upcomingTrain[index],
+                                              cubit: cubit,
+                                              context: context),
+                                      separatorBuilder: (context, index) =>
+                                          const SizedBox(height: 20),
+                                      itemCount: cubit.upcomingTrain.length),
+                                ]),
                           ),
-                          builder: (context) => Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text("Today",
-                                    style: TextStyle(
-                                        color: Colors.grey, fontSize: 16)),
-                                if (cubit.todayTrain.isEmpty)
-                                  const Center(
-                                      child: Text(
-                                    "No Trainings Today",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500),
-                                  )),
-                                const SizedBox(
-                                  height: 15,
-                                ),
-                                ListView.separated(
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    itemBuilder: (context, index) =>
-                                        trainingCard(
-                                            item: cubit.todayTrain[index],
-                                            cubit: cubit,
-                                            context: context),
-                                    separatorBuilder: (context, index) =>
-                                        const SizedBox(height: 20),
-                                    itemCount: cubit.todayTrain.length),
-                                const SizedBox(
-                                  height: 15,
-                                ),
-                                const Text("Upcoming",
-                                    style: TextStyle(
-                                        color: Colors.grey, fontSize: 16)),
-                                const SizedBox(
-                                  height: 15,
-                                ),
-                                if (cubit.upcomingTrain.isEmpty)
-                                  const Center(
-                                      child: Text(
-                                    "No Upcoming Trainings",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500),
-                                  )),
-                                ListView.separated(
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    itemBuilder: (context, index) =>
-                                        trainingCard(
-                                            item: cubit.upcomingTrain[index],
-                                            cubit: cubit,
-                                            context: context),
-                                    separatorBuilder: (context, index) =>
-                                        const SizedBox(height: 20),
-                                    itemCount: cubit.upcomingTrain.length),
-                              ]),
                         ),
                       ),
                     ),

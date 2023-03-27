@@ -29,9 +29,6 @@ class ProfileScreen extends StatelessWidget {
             padding: const EdgeInsets.all(0.0),
             child: Column(
               children: [
-                // const SizedBox(
-                //   width: 25,
-                // ),
                 Stack(
                   alignment: Alignment.bottomLeft,
                   children: [
@@ -41,7 +38,7 @@ class ProfileScreen extends StatelessWidget {
                       color: Colors.blue,
                     ),
                     Padding(
-                        padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
+                        padding: const  EdgeInsets.fromLTRB(15, 0, 0, 0),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [

@@ -1,12 +1,10 @@
+// ignore_for_file: sized_box_for_whitespace, avoid_unnecessary_containers
+
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sba7/cubits/AppCubit/app_cubit.dart';
 import 'package:sba7/cubits/AppCubit/app_states.dart';
-import 'package:sba7/models/user_model.dart';
 import 'package:sba7/shared/components.dart';
 import 'package:sba7/shared/constants.dart';
 import 'package:textfield_search/textfield_search.dart';
@@ -108,7 +106,7 @@ class ChampionshipScreen extends StatelessWidget {
                         width: 5,
                       ),
                       TextButton(
-                        child: Text("Filter"),
+                        child: const Text("Filter"),
                         onPressed: () {
                           cubit.filter();
                         },
@@ -146,7 +144,7 @@ class ChampionshipScreen extends StatelessWidget {
                               TextFieldSearch(
                                 decoration: InputDecoration(
                                   hintText: "Search",
-                                  prefixIcon: Icon(
+                                  prefixIcon: const Icon(
                                     Icons.search,
                                     color: Colors.black45,
                                   ),
@@ -324,7 +322,7 @@ class ChampionshipScreen extends StatelessWidget {
                         width: 5,
                       ),
                       TextButton(
-                        child: Text("Filter"),
+                        child:const Text("Filter"),
                         onPressed: () {
                           cubit.filter();
                         },
