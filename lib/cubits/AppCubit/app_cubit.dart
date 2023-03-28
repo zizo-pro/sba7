@@ -77,8 +77,8 @@ class AppCubit extends Cubit<AppStates> {
     var l = await supabase
         .from('trainings')
         .select('id,team,date,training_locations(id,location,maps)')
-        .eq('team', userData["team_code"]).gte('date', DateTime.now())
-        .order('date', ascending: true).limit(25);
+        .eq('team', userData["team_code"])
+        .order('date', ascending: true);
     l.forEach((element) {
       if (DateTime.parse(element['date']).isAfter(DateTime.now())) {
         if (DateTime.parse(element['date']).day == DateTime.now().day &&
@@ -88,7 +88,9 @@ class AppCubit extends Cubit<AppStates> {
             DateTime.parse(element['date']).hour >= DateTime.now().hour) {
           todayTrain.add(element);
         } else {
-          upcomingTrain.add(element);
+          if (upcomingTrain.length < 25) {
+            upcomingTrain.add(element);
+          }
         }
       } else if (DateTime.parse(element['date']).isBefore(DateTime.now())) {
         beforeTrain.add(element);
@@ -171,6 +173,7 @@ class AppCubit extends Cubit<AppStates> {
             .add("${i['full_name']} ${DateTime.parse(i['birth_date']).year}");
       }
     }
+    emit(GetSwimmersState());
   }
 
   Map attendance = {};
@@ -595,14 +598,17 @@ class AppCubit extends Cubit<AppStates> {
             print(onError.toString());
           });
     } else {
-      supabase.from('users').delete().eq('uid', id)
+      supabase
+          .from('users')
+          .delete()
+          .eq('uid', id)
           .then((value) => print("done"))
           .catchError((onError) {
         print(onError.toString());
       });
-      
     }
     notAcc.removeAt(index);
+    getSwimmers();
     emit(AcceptSwimmerState());
   }
 }

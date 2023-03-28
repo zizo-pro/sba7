@@ -19,9 +19,6 @@ class SwimmersScreen extends StatelessWidget {
             appBar: AppBar(
               actions: [
                 IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.notifications_outlined)),
-                IconButton(
                     onPressed: () {
                       showDialog(
                         context: context,
@@ -29,6 +26,7 @@ class SwimmersScreen extends StatelessWidget {
                           return BlocConsumer<AppCubit, AppStates>(
                             listener: (context, state) {},
                             builder: (context, state) => AlertDialog(
+                              contentPadding: EdgeInsets.all(16),
                               title: const Text("New Swimmers"),
                               content: SingleChildScrollView(
                                 child: Column(children: [
@@ -56,16 +54,25 @@ class SwimmersScreen extends StatelessWidget {
                         },
                       );
                     },
+                    icon: const Icon(Icons.notifications_outlined)),
+                IconButton(
+                    onPressed: () {
+                      
+                    },
                     icon: const Icon(Icons.add))
               ],
             ),
-            body: GridView.count(
-                crossAxisCount: 2,
-                childAspectRatio: 0.8,
-                children: List.generate(
-                    swimmers.length,
-                    (index) => swimmerGridItem(
-                        userData: swimmers[index], onTap: () {}))),
+            body: ConditionalBuilder(
+              condition: swimmers.isNotEmpty,
+              fallback: (context) => const Center(child: CircularProgressIndicator(),),
+              builder:(context) =>  GridView.count(
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.8,
+                  children: List.generate(
+                      swimmers.length,
+                      (index) => swimmerGridItem(
+                          userData: swimmers[index], onTap: () {}))),
+            ),
           );
         });
   }

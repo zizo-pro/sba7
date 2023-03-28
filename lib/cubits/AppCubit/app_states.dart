@@ -37,3 +37,5 @@ class AddTrainingRadioState extends AppStates{}
 
 class AcceptSwimmerState extends AppStates{}
 
+class GetSwimmersState extends AppStates{}
+

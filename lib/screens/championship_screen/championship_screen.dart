@@ -52,8 +52,8 @@ class ChampionshipScreen extends StatelessWidget {
                               value: cubit.championshipsDropdownValue,
                               decoration: const InputDecoration(
                                   border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(6)))),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(6)))),
                             ),
                           ),
                         ],
@@ -78,8 +78,8 @@ class ChampionshipScreen extends StatelessWidget {
                               value: cubit.eventsDropdownValue,
                               decoration: const InputDecoration(
                                   border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(6)))),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(6)))),
                             ),
                           ),
                         ],
@@ -243,10 +243,10 @@ class ChampionshipScreen extends StatelessWidget {
                 )
               ],
             ),
-            body: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
+            body: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
                 child: Column(children: [
                   Row(
                     children: [
@@ -322,7 +322,7 @@ class ChampionshipScreen extends StatelessWidget {
                         width: 5,
                       ),
                       TextButton(
-                        child:const Text("Filter"),
+                        child: const Text("Filter"),
                         onPressed: () {
                           cubit.filter();
                         },

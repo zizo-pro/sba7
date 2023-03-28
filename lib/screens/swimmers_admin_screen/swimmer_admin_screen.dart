@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sba7/screens/subscription_screen/subscription_screen.dart';
 import 'package:sba7/screens/swimmers_screen/swimmers_screen.dart';
 import 'package:sba7/shared/components.dart';
 import 'package:sba7/shared/custom_icons.dart';
@@ -28,7 +29,11 @@ class SwimmerAdminScreen extends StatelessWidget {
                     icon: CustomIcons.swimming,
                     label: "Swimmers"),
                 adminGridItem(
-                    onTap: () {}, icon: Icons.money, label: "Subscription"),
+                    onTap: () {
+                      navigateTo(context,const SubscriptionScreen());
+                    },
+                    icon: Icons.money,
+                    label: "Subscription"),
               ],
             )
           ],

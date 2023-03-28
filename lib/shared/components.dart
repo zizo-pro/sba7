@@ -94,6 +94,7 @@ Widget trainingCard({context, required item, cubit}) {
       height: 110,
       width: double.infinity,
       decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
             color: Colors.grey[400] as Color,
@@ -183,6 +184,7 @@ Widget editAttendance({required swimmerData, required BuildContext context}) {
           height: 80,
           width: double.infinity,
           decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
             boxShadow: [
               BoxShadow(
                 color: Colors.grey[400] as Color,
@@ -280,6 +282,7 @@ Widget alreadyAttendance({required swimmerData}) {
     height: 80,
     width: double.infinity,
     decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(8),
       boxShadow: [
         BoxShadow(
           color: Colors.grey[400] as Color,
@@ -352,6 +355,7 @@ Widget userAttendanceCard({required swimmerData, required context}) {
           height: 80,
           width: double.infinity,
           decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
             boxShadow: [
               BoxShadow(
                 color: Colors.grey[400] as Color,
@@ -436,6 +440,7 @@ Widget championShipResult({required resData}) {
     height: 80,
     width: double.infinity,
     decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(8),
       boxShadow: [
         BoxShadow(
           color: Colors.grey[400] as Color,
@@ -627,80 +632,94 @@ Widget swimmerGridItem({required userData, required onTap}) {
   );
 }
 
-Widget nonacceptSwimmers({required swimmerData,required index}) {
-  return BlocConsumer<AppCubit,AppStates>(
-    listener: (context, state) {
-      
-    },
-    builder:(context, state)   {
-      var cubit= AppCubit.get(context);
-      return Container(
-      padding: const EdgeInsets.all(8),
-      height: 80,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey[400] as Color,
-            blurStyle: BlurStyle.outer,
-            spreadRadius: 0.6,
-            blurRadius: 7,
-          )
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(6),
-        child: Row(children: [
-          CircleAvatar(
-              radius: 27,
-              child: ClipOval(
-                child: SizedBox.fromSize(
-                  size: const Size.fromRadius(80),
-                  child: CachedNetworkImage(
-                    imageUrl: swimmerData['profile_picture'],
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              )),
-          const SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                toBeginningOfSentenceCase(swimmerData["full_name"].toString())
-                    .toString(),
-                style: const TextStyle(fontSize: 16),
-              ),
-              Text(
-                DateTime.parse(swimmerData['birth_date']).year.toString(),
-                style: TextStyle(color: Colors.grey[500]),
-              ),
+Widget nonacceptSwimmers({required swimmerData, required index}) {
+  return BlocConsumer<AppCubit, AppStates>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        var cubit = AppCubit.get(context);
+        return Container(
+          // padding: const EdgeInsets.all(4),
+          height: 80,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey[400] as Color,
+                blurStyle: BlurStyle.outer,
+                spreadRadius: 0.6,
+                blurRadius: 7,
+              )
             ],
           ),
-          const Spacer(),
-          CircleAvatar(
-            backgroundColor: Colors.green,
-            radius: 16,
-            child: IconButton(
-                iconSize: 16,
-                color: Colors.white,
-                onPressed: () {cubit.acceptSwimmer(id: swimmerData['uid'],isAccepted: true,index: index);},
-                icon: const Icon(Icons.check)),
+          child: Padding(
+            padding: const EdgeInsets.all(6),
+            child: Row(children: [
+              CircleAvatar(
+                  radius: 27,
+                  child: ClipOval(
+                    child: SizedBox.fromSize(
+                      size: const Size.fromRadius(80),
+                      child: CachedNetworkImage(
+                        imageUrl: swimmerData['profile_picture'],
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  )),
+              const SizedBox(width: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 95,
+                    child: Text(
+                      overflow: TextOverflow.ellipsis,
+                      toBeginningOfSentenceCase(
+                              swimmerData["full_name"].toString())
+                          .toString(),
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ),
+                  Text(
+                    DateTime.parse(swimmerData['birth_date']).year.toString(),
+                    style: TextStyle(color: Colors.grey[500]),
+                  ),
+                ],
+              ),
+              const Spacer(),
+              CircleAvatar(
+                backgroundColor: Colors.green,
+                radius: 16,
+                child: IconButton(
+                    iconSize: 16,
+                    color: Colors.white,
+                    onPressed: () {
+                      cubit.acceptSwimmer(
+                          id: swimmerData['uid'],
+                          isAccepted: true,
+                          index: index);
+                    },
+                    icon: const Icon(Icons.check)),
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              CircleAvatar(
+                backgroundColor: Colors.red,
+                radius: 16,
+                child: IconButton(
+                    iconSize: 16,
+                    color: Colors.white,
+                    onPressed: () {
+                      cubit.acceptSwimmer(
+                          id: swimmerData['uid'],
+                          isAccepted: false,
+                          index: index);
+                    },
+                    icon: const Icon(Icons.close)),
+              ),
+            ]),
           ),
-          const SizedBox(
-            width: 10,
-          ),
-          CircleAvatar(
-            backgroundColor: Colors.red,
-            radius: 16,
-            child: IconButton(
-                iconSize: 16,
-                color: Colors.white,
-                onPressed: () {cubit.acceptSwimmer(id: swimmerData['uid'],isAccepted: false,index: index);},
-                icon: const Icon(Icons.close)),
-          ),
-        ]),
-      ),
-    );}  );
+        );
+      });
 }
