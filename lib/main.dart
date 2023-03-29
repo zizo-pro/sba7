@@ -10,6 +10,7 @@ import 'package:sba7/layout/home_layout.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:sba7/screens/login_screen/login_screen.dart';
 import 'package:sba7/screens/not_accepted_screen/not_accepted_screen.dart';
+import 'package:sba7/screens/subscription_screen/subscription_screen.dart';
 import 'package:sba7/shared/bloc_observer.dart';
 import 'package:sba7/shared/cache_helper.dart';
 import 'package:sba7/shared/constants.dart';
@@ -86,7 +87,7 @@ class MyApp extends StatelessWidget {
         child: BlocConsumer<LoginCubit, LoginStates>(
           listener: (context, state) {},
           builder: (context, state) {
-            return MaterialApp(home: startWidget);
+            return MaterialApp(home: SubscriptionScreen());
           },
         ));
   }
