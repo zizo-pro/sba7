@@ -368,7 +368,6 @@ class AppCubit extends Cubit<AppStates> {
     emit(FilterAppState());
   }
 
-  void checkFilter() {}
 
   dynamic eventsDropdownValue = 0;
   List<DropdownMenuItem> events = [];

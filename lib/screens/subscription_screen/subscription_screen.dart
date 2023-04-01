@@ -102,72 +102,43 @@ class SubscriptionScreen extends StatelessWidget {
                                       Row(children: [
                                         Expanded(
                                           child: DropdownButtonFormField(
-                                            value: cubit.yearDropdownValue,
-                                            onChanged: (value) {
-                                              cubit.yearfilterDropdown(
-                                                  value: value);
-                                            },
-                                            hint: const Text("Year"),
-                                            decoration: const InputDecoration(
-                                                border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(
-                                                                6)))),
-                                            items: [
-                                              DropdownMenuItem(
-                                                  child: Text(
-                                                    "...",
-                                                  ),
-                                                  value: 0),
-                                              DropdownMenuItem(
-                                                  child: Text(
-                                                    "2022",
-                                                  ),
-                                                  value: 1),
-                                              DropdownMenuItem(
-                                                  child: Text(
-                                                    "2022",
-                                                  ),
-                                                  value: 2),
-                                            ],
-                                          ),
+                                              iconSize: 21,
+                                              value: cubit.yearDropdownValue,
+                                              onChanged: (value) {
+                                                cubit.yearfilterDropdown(
+                                                    value: value);
+                                              },
+                                              hint: const Text("Year"),
+                                              decoration: const InputDecoration(
+                                                  border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  6)))),
+                                              items: cubit.yearsDropdown),
                                         ),
                                         const SizedBox(
                                           width: 5,
                                         ),
                                         Expanded(
                                           child: DropdownButtonFormField(
-                                            value: cubit.monthDropdownValue,
-                                            onChanged: (value) {
-                                              cubit.monthfilterDropdown(
-                                                  value: value);
-                                            },
-                                            hint: const Text("Month"),
-                                            decoration: const InputDecoration(
-                                                border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(
-                                                                6)))),
-                                            items: const [
-                                              DropdownMenuItem(
-                                                  child: Text(
-                                                    "...",
-                                                  ),
-                                                  value: 0),
-                                              DropdownMenuItem(
-                                                  child: Text(
-                                                    "2022",
-                                                  ),
-                                                  value: 1),
-                                              DropdownMenuItem(
-                                                  child: Text(
-                                                    "2022",
-                                                  ),
-                                                  value: 2),
-                                            ],
-                                          ),
+                                              iconSize: 21,
+                                              style: const TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.black),
+                                              value: cubit.monthDropdownValue,
+                                              onChanged: (value) {
+                                                cubit.monthfilterDropdown(
+                                                    value: value);
+                                              },
+                                              hint: const Text("Month"),
+                                              decoration: const InputDecoration(
+                                                  border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  6)))),
+                                              items: cubit.monthsDropdown),
                                         ),
                                       ]),
                                       const SizedBox(
@@ -185,7 +156,9 @@ class SubscriptionScreen extends StatelessWidget {
                                         ),
                                       ),
                                       TextButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          cubit.filter();
+                                        },
                                         child: const Text("Filter"),
                                       )
                                     ],

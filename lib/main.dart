@@ -84,7 +84,7 @@ class MyApp extends StatelessWidget {
               ..init()
               ..getLocations(),
           ),
-          BlocProvider(create: (context) => SubscriptionCubit()),
+          BlocProvider(create: (context) => SubscriptionCubit()..getSubscription()),
         ],
         child: BlocConsumer<LoginCubit, LoginStates>(
           listener: (context, state) {},
