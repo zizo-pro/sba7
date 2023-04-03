@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sba7/screens/subscription_screen/cubit/subscription_states.dart';
+import 'package:sba7/shared/constants.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SubscriptionCubit extends Cubit<SubscriptionStates> {
   SubscriptionCubit() : super(SubscriptionInitState());
+
+  get allsubs => null;
   static SubscriptionCubit get(context) => BlocProvider.of(context);
 
   var supabase = Supabase.instance.client;
@@ -70,12 +73,11 @@ class SubscriptionCubit extends Cubit<SubscriptionStates> {
   void getSubscription() {
     supabase
         .from('subscription')
-        .select('year,month,user_id,amount')
+        .select('year,month,users(full_name,profile_picture,birth_date),amount')
         .order('year', ascending: true)
         .then((value) {
       allSubs = value;
-      yearsDropdown.add(const DropdownMenuItem(value: 0, child: Text('...')));
-      int x = 1;
+      int x = 0;
       for (var i in value) {
         if (years.contains(i['year'])) {
         } else {
@@ -90,16 +92,22 @@ class SubscriptionCubit extends Cubit<SubscriptionStates> {
         }
       }
       monthDropdownValue = DateTime.now().month - 1;
-      yearDropdownValue = years.indexOf(DateTime.now().year) + 1;
+      yearDropdownValue = years.indexOf(DateTime.now().year);
       print(value);
+      emit(GetSubscriptionSuccessState());
     }).catchError((onError) {
       print(onError);
+      emit(GetSubscriptionErrorState());
     });
   }
 
   List lol = [];
   void filter() {
-    lol = allSubs.where((element) => element['year'] == 2023).toList();
+    lol = allSubs
+        .where((element) =>
+            element['year'] == years[yearDropdownValue!] &&
+            element['month'] == fullMonths[monthDropdownValue as int])
+        .toList();
     print(lol);
   }
 

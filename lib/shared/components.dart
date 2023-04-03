@@ -723,3 +723,47 @@ Widget nonacceptSwimmers({required swimmerData, required index}) {
         );
       });
 }
+
+Widget subscriptionItemBuiler(swimmer) {
+  return InkWell(
+    splashColor: Colors.grey,
+    onTap: () {},
+    child: GestureDetector(
+      child: Container(
+        height: 180,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.grey[500] as Color,
+                  blurRadius: 10,
+                  blurStyle: BlurStyle.outer,
+                  spreadRadius: 0,
+                  offset: const Offset(-1, -1)),
+            ],
+            borderRadius: BorderRadius.circular(5)),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+              // mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                    radius: 28,
+                    child: ClipOval(
+                        child: SizedBox.fromSize(
+                            size: const Size.fromRadius(60),
+                            child: CachedNetworkImage(
+                              imageUrl: swimmer['users']['profile_picture'],
+                              fit: BoxFit.fill,
+                            )))),
+                const SizedBox(
+                  height: 4,
+                ),
+                Text(swimmer['users']['full_name']),
+                Text(swimmer['amount'].toString())
+              ]),
+        ),
+      ),
+    ),
+  );
+}
