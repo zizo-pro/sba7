@@ -84,12 +84,13 @@ class MyApp extends StatelessWidget {
               ..init()
               ..getLocations(),
           ),
-          BlocProvider(create: (context) => SubscriptionCubit()..getSubscription()),
+          BlocProvider(create: (context) => SubscriptionCubit()
+                ..getSubscription()),
         ],
         child: BlocConsumer<LoginCubit, LoginStates>(
           listener: (context, state) {},
           builder: (context, state) {
-            return MaterialApp(home: startWidget);
+            return MaterialApp(home: SubscriptionScreen());
           },
         ));
   }

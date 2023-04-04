@@ -7,92 +7,28 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class SubscriptionCubit extends Cubit<SubscriptionStates> {
   SubscriptionCubit() : super(SubscriptionInitState());
 
-  get allsubs => null;
   static SubscriptionCubit get(context) => BlocProvider.of(context);
-
+  TextEditingController dateController = TextEditingController();
   var supabase = Supabase.instance.client;
+
   TextEditingController swimmerFilterController = TextEditingController();
-
-  List years = [];
-
-  List<DropdownMenuItem> yearsDropdown = [];
-
-  List<DropdownMenuItem> monthsDropdown = const [
-    DropdownMenuItem(
-      value: 0,
-      child: Text('January'),
-    ),
-    DropdownMenuItem(
-      value: 1,
-      child: Text('February'),
-    ),
-    DropdownMenuItem(
-      value: 2,
-      child: Text('March'),
-    ),
-    DropdownMenuItem(
-      value: 3,
-      child: Text('April'),
-    ),
-    DropdownMenuItem(
-      value: 4,
-      child: Text('May'),
-    ),
-    DropdownMenuItem(
-      value: 5,
-      child: Text('June'),
-    ),
-    DropdownMenuItem(
-      value: 6,
-      child: Text('July'),
-    ),
-    DropdownMenuItem(
-      value: 7,
-      child: Text('August'),
-    ),
-    DropdownMenuItem(
-      value: 8,
-      child: Text('September'),
-    ),
-    DropdownMenuItem(
-      value: 9,
-      child: Text('October'),
-    ),
-    DropdownMenuItem(
-      value: 10,
-      child: Text('November'),
-    ),
-    DropdownMenuItem(
-      value: 11,
-      child: Text('December'),
-    )
-  ];
+  TextEditingController swimmerSearchController = TextEditingController();
 
   List allSubs = [];
 
   void getSubscription() {
+    dateController.text =
+        "${fullMonths[DateTime.now().month - 1]} ${DateTime.now().year}";
     supabase
         .from('subscription')
-        .select('year,month,users(full_name,profile_picture,birth_date),amount')
-        .order('year', ascending: true)
+        .select('date,users(full_name,profile_picture,birth_date),amount')
+        .order('id', ascending: true)
         .then((value) {
       allSubs = value;
-      int x = 0;
-      for (var i in value) {
-        if (years.contains(i['year'])) {
-        } else {
-          years.add(i['year']);
-          yearsDropdown.add(DropdownMenuItem(
-            value: x,
-            child: Text(
-              i['year'].toString(),
-            ),
-          ));
-          x += 1;
-        }
-      }
-      monthDropdownValue = DateTime.now().month - 1;
-      yearDropdownValue = years.indexOf(DateTime.now().year);
+
+      lol = allSubs
+          .where((element) => element['date'] == dateController.text)
+          .toList();
       print(value);
       emit(GetSubscriptionSuccessState());
     }).catchError((onError) {
@@ -102,24 +38,30 @@ class SubscriptionCubit extends Cubit<SubscriptionStates> {
   }
 
   List lol = [];
+  num sum = 0;
   void filter() {
-    lol = allSubs
-        .where((element) =>
-            element['year'] == years[yearDropdownValue!] &&
-            element['month'] == fullMonths[monthDropdownValue as int])
-        .toList();
+    if (swimmerSearchController.text == '') {
+      lol = allSubs
+          .where((element) => element['date'] == dateController.text)
+          .toList();
+    } else {
+      lol = allSubs
+          .where((element) =>
+              element['date'] == dateController.text &&
+              element['users']['full_name']
+                  .toUpperCase()
+                  .contains(swimmerSearchController.text.toUpperCase()))
+          .toList();
+    }
+    
+    sum = lol.fold(0, (acc, transaction) => acc + transaction['amount']);
+
+    emit(FilterSubscriptionState());
     print(lol);
   }
 
-  int? yearDropdownValue = 0;
-  void yearfilterDropdown({required int? value}) {
-    yearDropdownValue = value;
-    emit(SubscriptionChangeDropDownState());
-  }
-
-  int? monthDropdownValue = 0;
-  void monthfilterDropdown({required int? value}) {
-    monthDropdownValue = value;
+  void dateSelect(DateTime? value) {
+    dateController.text = '${fullMonths[value!.month - 1]} ${value.year}';
     emit(SubscriptionChangeDropDownState());
   }
 }

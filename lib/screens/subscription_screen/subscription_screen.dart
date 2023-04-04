@@ -5,6 +5,7 @@ import 'package:sba7/screens/subscription_screen/cubit/subscription_states.dart'
 import 'package:sba7/screens/subscription_screen/cubit/subscrition_cubit.dart';
 import 'package:sba7/shared/components.dart';
 import 'package:sba7/shared/constants.dart';
+import 'package:month_picker_dialog/month_picker_dialog.dart';
 
 class SubscriptionScreen extends StatelessWidget {
   const SubscriptionScreen({super.key});
@@ -47,10 +48,7 @@ class SubscriptionScreen extends StatelessWidget {
                           children: [
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                    "${fullMonths[cubit.monthDropdownValue as int]} ${cubit.years[cubit.yearDropdownValue as int]}")
-                              ],
+                              children: [Text(cubit.dateController.text)],
                             ),
                             const SizedBox(
                               height: 10,
@@ -63,19 +61,19 @@ class SubscriptionScreen extends StatelessWidget {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Row(
-                                        children: const [
-                                          Text(
+                                        children: [
+                                          const Text(
                                             'Total:',
                                             style: TextStyle(
                                                 fontSize: 22,
                                                 fontWeight: FontWeight.w500),
                                           ),
-                                          SizedBox(
+                                          const SizedBox(
                                             width: 5,
                                           ),
                                           Text(
-                                            '1500\$',
-                                            style: TextStyle(
+                                            "${cubit.sum.toString()} \$",
+                                            style: const TextStyle(
                                               fontSize: 22,
                                               fontWeight: FontWeight.w600,
                                             ),
@@ -86,19 +84,19 @@ class SubscriptionScreen extends StatelessWidget {
                                         height: 10,
                                       ),
                                       Row(
-                                        children: const [
-                                          Text(
+                                        children: [
+                                          const Text(
                                             'No. of Swimmers:',
                                             style: TextStyle(
                                                 fontSize: 22,
                                                 fontWeight: FontWeight.w500),
                                           ),
-                                          SizedBox(
+                                          const SizedBox(
                                             width: 5,
                                           ),
                                           Text(
-                                            '10',
-                                            style: TextStyle(
+                                            cubit.lol.length.toString(),
+                                            style: const TextStyle(
                                                 fontSize: 22,
                                                 fontWeight: FontWeight.w600),
                                           ),
@@ -122,50 +120,31 @@ class SubscriptionScreen extends StatelessWidget {
                                           children: [
                                             Row(children: [
                                               Expanded(
-                                                child: DropdownButtonFormField(
-                                                    iconSize: 21,
-                                                    value:
-                                                        cubit.yearDropdownValue,
-                                                    onChanged: (value) {
-                                                      cubit.yearfilterDropdown(
-                                                          value: value);
-                                                    },
-                                                    hint: const Text("Year"),
-                                                    decoration: const InputDecoration(
-                                                        border: OutlineInputBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .all(Radius
-                                                                        .circular(
-                                                                            6)))),
-                                                    items: cubit.yearsDropdown),
-                                              ),
-                                              const SizedBox(
-                                                width: 5,
-                                              ),
-                                              Expanded(
-                                                child: DropdownButtonFormField(
-                                                    iconSize: 21,
-                                                    style: const TextStyle(
-                                                        fontSize: 14,
-                                                        color: Colors.black),
-                                                    value: cubit
-                                                        .monthDropdownValue,
-                                                    onChanged: (value) {
-                                                      cubit.monthfilterDropdown(
-                                                          value: value);
-                                                    },
-                                                    hint: const Text("Month"),
-                                                    decoration: const InputDecoration(
-                                                        border: OutlineInputBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .all(Radius
-                                                                        .circular(
-                                                                            6)))),
-                                                    items:
-                                                        cubit.monthsDropdown),
-                                              ),
+                                                  child: TextFormField(
+                                                keyboardType:
+                                                    TextInputType.none,
+                                                controller:
+                                                    cubit.dateController,
+                                                decoration: const InputDecoration(
+                                                    labelText: "Date",
+                                                    border: OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    6)))),
+                                                onTap: () => showMonthPicker(
+                                                  context: context,
+                                                  initialDate: DateTime(
+                                                      DateTime.now().year,
+                                                      DateTime.now().month),
+                                                  firstDate:
+                                                      DateTime(2000, 01, 01),
+                                                  lastDate:
+                                                      DateTime(2040, 01, 01),
+                                                ).then((DateTime? value) {
+                                                  cubit.dateSelect(value);
+                                                }),
+                                              )),
                                             ]),
                                             const SizedBox(
                                               height: 10,
@@ -173,8 +152,10 @@ class SubscriptionScreen extends StatelessWidget {
                                             Container(
                                               width: double.infinity,
                                               child: TextFormField(
+                                                controller: cubit
+                                                    .swimmerSearchController,
                                                 decoration: const InputDecoration(
-                                                    hintText: "Swimmer Name",
+                                                    labelText: "Swimmer Name",
                                                     border: OutlineInputBorder(
                                                         borderRadius:
                                                             BorderRadius.all(
@@ -210,9 +191,9 @@ class SubscriptionScreen extends StatelessWidget {
                       crossAxisSpacing: 8,
                       mainAxisSpacing: 10,
                       childAspectRatio: 0.8,
-                      children: List.generate(
-                          cubit.allSubs.length, (index) => subscriptionItemBuiler(cubit.allSubs[index])),
-                    )
+                      children: List.generate(cubit.lol.length,
+                          (index) => subscriptionItemBuiler(cubit.lol[index])),
+                    ),
                   ],
                 ),
               ),

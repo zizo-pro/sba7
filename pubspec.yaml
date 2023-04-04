@@ -46,6 +46,7 @@ dependencies:
   shared_preferences: ^2.0.17
   restart_app: ^1.1.2
   dropdown_search: ^5.0.6
+  month_picker_dialog: ^1.0.0
   textfield_search: ^0.10.0
   fluttertoast: ^8.2.1
   permission_handler: ^10.2.0

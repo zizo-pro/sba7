@@ -757,10 +757,24 @@ Widget subscriptionItemBuiler(swimmer) {
                               fit: BoxFit.fill,
                             )))),
                 const SizedBox(
-                  height: 4,
+                  height: 7,
                 ),
-                Text(swimmer['users']['full_name']),
-                Text(swimmer['amount'].toString())
+                Text(swimmer['users']['full_name'],
+                    style: const TextStyle(fontWeight: FontWeight.w500),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis),
+                Text(DateTime.parse(swimmer['users']['birth_date'])
+                    .year
+                    .toString()),
+                Text(
+                  "${swimmer['amount'].toString()} \$",
+                  style: const TextStyle(
+                      color: Colors.green,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 15),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                )
               ]),
         ),
       ),
