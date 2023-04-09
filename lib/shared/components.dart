@@ -725,6 +725,12 @@ Widget nonacceptSwimmers({required swimmerData, required index}) {
 }
 
 Widget subscriptionItemBuiler(swimmer) {
+  Color textColor;
+  if (swimmer['amount'] > 0) {
+    textColor = Colors.green;
+  } else {
+    textColor = Colors.red;
+  }
   return InkWell(
     splashColor: Colors.grey,
     onTap: () {},
@@ -768,8 +774,8 @@ Widget subscriptionItemBuiler(swimmer) {
                     .toString()),
                 Text(
                   "${swimmer['amount'].toString()} \$",
-                  style: const TextStyle(
-                      color: Colors.green,
+                  style: TextStyle(
+                      color: textColor,
                       fontWeight: FontWeight.w500,
                       fontSize: 15),
                   maxLines: 1,

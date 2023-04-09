@@ -90,7 +90,7 @@ class MyApp extends StatelessWidget {
         child: BlocConsumer<LoginCubit, LoginStates>(
           listener: (context, state) {},
           builder: (context, state) {
-            return MaterialApp(home: SubscriptionScreen());
+            return MaterialApp(home: startWidget);
           },
         ));
   }
