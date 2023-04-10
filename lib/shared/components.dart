@@ -1,6 +1,7 @@
 // ignore_for_file: constant_identifier_names, sized_box_for_whitespace
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -624,7 +625,6 @@ Widget swimmerGridItem({required userData, required onTap}) {
                   DateTime.parse(userData['birth_date']).year.toString(),
                   style: const TextStyle(),
                 ),
-                // const Spacer(),
               ],
             ),
           )),
@@ -724,7 +724,7 @@ Widget nonacceptSwimmers({required swimmerData, required index}) {
       });
 }
 
-Widget subscriptionItemBuiler(swimmer) {
+Widget subscriptionItemBuiler(swimmer, context, cubit) {
   Color textColor;
   if (swimmer['amount'] > 0) {
     textColor = Colors.green;
@@ -733,7 +733,73 @@ Widget subscriptionItemBuiler(swimmer) {
   }
   return InkWell(
     splashColor: Colors.grey,
-    onTap: () {},
+    onTap: () {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(swimmer['users']['full_name']),
+          content: ConditionalBuilder(
+            condition: swimmer['amount'] == 0,
+            fallback: (context) => Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("${swimmer['amount']} \$",
+                    style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.green)),
+                Text(swimmer['method'],
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w500,
+                    ))
+              ],
+            ),
+            builder: (context) => Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                textfield(
+                    label: "Amount",
+                    controller: cubit.addAmountController,
+                    obscure: false,
+                    type: TextInputType.number,
+                    prefix: Icons.attach_money),
+                const SizedBox(
+                  height: 10,
+                ),
+                DropdownButtonFormField(
+                    value: cubit.dropdownvalue,
+                    decoration: const InputDecoration(
+                      labelStyle: TextStyle(color: Colors.black),
+                      labelText: "Payment Method",
+                      border: OutlineInputBorder(),
+                    ),
+                    items: const [
+                      DropdownMenuItem(
+                        value: 0,
+                        child: Text("Cash"),
+                      ),
+                      DropdownMenuItem(
+                        value: 1,
+                        child: Text("Visa"),
+                      )
+                    ],
+                    onChanged: (value) {
+                      cubit.changeDropDown(value);
+                    }),
+                TextButton(
+                  child: const Text("pay"),
+                  onPressed: () {
+                    cubit.addAmount(swimmer);
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
     child: GestureDetector(
       child: Container(
         height: 180,
@@ -754,14 +820,17 @@ Widget subscriptionItemBuiler(swimmer) {
               // mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircleAvatar(
-                    radius: 28,
-                    child: ClipOval(
-                        child: SizedBox.fromSize(
-                            size: const Size.fromRadius(60),
-                            child: CachedNetworkImage(
-                              imageUrl: swimmer['users']['profile_picture'],
-                              fit: BoxFit.fill,
-                            )))),
+                  radius: 28,
+                  child: ClipOval(
+                    child: SizedBox.fromSize(
+                      size: const Size.fromRadius(60),
+                      child: CachedNetworkImage(
+                        imageUrl: swimmer['users']['profile_picture'],
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                  ),
+                ),
                 const SizedBox(
                   height: 7,
                 ),

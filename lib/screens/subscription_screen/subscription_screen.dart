@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sba7/screens/subscription_screen/cubit/subscription_states.dart';
 import 'package:sba7/screens/subscription_screen/cubit/subscrition_cubit.dart';
 import 'package:sba7/shared/components.dart';
-import 'package:sba7/shared/constants.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 
 class SubscriptionScreen extends StatelessWidget {
@@ -19,11 +18,7 @@ class SubscriptionScreen extends StatelessWidget {
         return Scaffold(
             // backgroundColor: Colors.grey,
             appBar: AppBar(),
-            body: ConditionalBuilder(
-              condition: cubit.allSubs.isNotEmpty,
-              fallback: (context) =>
-                  const Center(child: CircularProgressIndicator()),
-              builder: (context) => SingleChildScrollView(
+            body: SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -201,21 +196,33 @@ class SubscriptionScreen extends StatelessWidget {
                       const SizedBox(
                         height: 5,
                       ),
-                      GridView.count(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        crossAxisCount: 3,
-                        crossAxisSpacing: 8,
-                        mainAxisSpacing: 10,
-                        childAspectRatio: 0.8,
-                        children: List.generate(
-                            cubit.lol
-                                .where((element) => element['amount'] > 0)
-                                .toList()
-                                .length,
-                            (index) => subscriptionItemBuiler(cubit.lol
-                                .where((element) => element['amount'] > 0)
-                                .toList()[index])),
+                      ConditionalBuilder(
+                        condition: cubit.lol
+                            .where((element) => element['amount'] > 0)
+                            .toList()
+                            .isNotEmpty,
+                        fallback: (context) => const Center(
+                            child: Text(
+                          "No Swimmers Paid",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w500),
+                        )),
+                        builder: (context) => GridView.count(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          crossAxisCount: 3,
+                          crossAxisSpacing: 8,
+                          mainAxisSpacing: 10,
+                          childAspectRatio: 0.8,
+                          children: List.generate(
+                              cubit.lol
+                                  .where((element) => element['amount'] > 0)
+                                  .toList()
+                                  .length,
+                              (index) => subscriptionItemBuiler(cubit.lol
+                                  .where((element) => element['amount'] > 0)
+                                  .toList()[index],context,cubit)),
+                        ),
                       ),
                       const SizedBox(
                         height: 25,
@@ -228,27 +235,37 @@ class SubscriptionScreen extends StatelessWidget {
                       const SizedBox(
                         height: 5,
                       ),
-                      GridView.count(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        crossAxisCount: 3,
-                        crossAxisSpacing: 8,
-                        mainAxisSpacing: 10,
-                        childAspectRatio: 0.8,
-                        children: List.generate(
-                            cubit.lol
-                                .where((element) => element['amount'] == 0)
-                                .toList()
-                                .length,
-                            (index) => subscriptionItemBuiler(cubit.lol
-                                .where((element) => element['amount'] == 0)
-                                .toList()[index])),
+                      ConditionalBuilder(
+                        condition: cubit.lol
+                            .where((element) => element['amount'] == 0)
+                            .toList()
+                            .isNotEmpty,
+                        fallback: (context) => const Center(
+                          child: Text("All Swimmers Paid"),
+                        ),
+                        builder: (context) => GridView.count(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          crossAxisCount: 3,
+                          crossAxisSpacing: 8,
+                          mainAxisSpacing: 10,
+                          childAspectRatio: 0.8,
+                          children: List.generate(
+                              cubit.lol
+                                  .where((element) => element['amount'] == 0)
+                                  .toList()
+                                  .length,
+                              (index) => subscriptionItemBuiler(cubit.lol
+                                  .where((element) => element['amount'] == 0)
+                                  .toList()[index],
+                                  context,cubit)),
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
-            ));
+            );
       },
     );
   }

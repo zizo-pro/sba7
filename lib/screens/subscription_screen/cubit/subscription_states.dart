@@ -9,3 +9,4 @@ class GetSubscriptionErrorState extends SubscriptionStates{}
 class EmitSubscriptionState extends SubscriptionStates{}
 
 class FilterSubscriptionState extends SubscriptionStates{}
+

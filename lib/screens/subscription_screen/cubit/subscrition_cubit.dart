@@ -15,15 +15,17 @@ class SubscriptionCubit extends Cubit<SubscriptionStates> {
 
   TextEditingController swimmerFilterController = TextEditingController();
   TextEditingController swimmerSearchController = TextEditingController();
+  TextEditingController addAmountController = TextEditingController();
 
   List allSubs = [];
-
+  List<String> methods = ["Cash", "Visa"];
   void getSubscription() {
     dateController.text =
         "${fullMonths[DateTime.now().month - 1]} ${DateTime.now().year}";
     supabase
         .from('subscription')
-        .select('date,users(full_name,profile_picture,birth_date,uid),amount')
+        .select(
+            'date,users(full_name,profile_picture,birth_date,uid),amount,method')
         .order('id', ascending: true)
         .then((value) {
       allSubs = value;
@@ -31,11 +33,10 @@ class SubscriptionCubit extends Cubit<SubscriptionStates> {
       lol = allSubs
           .where((element) => element['date'] == dateController.text)
           .toList();
+      mergeLists(swimmers, lol);
       sum = lol.fold(0, (acc, transaction) => acc + transaction['amount']);
-      print(value);
       emit(GetSubscriptionSuccessState());
     }).catchError((onError) {
-      print(onError);
       emit(GetSubscriptionErrorState());
     });
   }
@@ -68,11 +69,23 @@ class SubscriptionCubit extends Cubit<SubscriptionStates> {
     emit(SubscriptionChangeDropDownState());
   }
 
-  void mergeLists(List swimmers, List lol) {
-    // Convert list b to a set of uids for faster lookup
-    final bUidSet = Set.from(lol.map((e) => e['users']['uid'])).toList();
+  void addAmount(swimmer) {
+    supabase
+        .from("subscription")
+        .insert({
+          "user_id": swimmer['users']['uid'],
+          "amount": int.parse(addAmountController.text),
+          'date': dateController.text,
+          "method": methods[dropdownvalue],
+        })
+        .then((value) => getSubscription())
+        .catchError((onError) {
+          print(onError.toString());
+        });
+  }
 
-    // Iterate through list a and add elements from list b that are not in list a
+  void mergeLists(List swimmers, List lol) {
+    final bUidSet = Set.from(lol.map((e) => e['users']['uid'])).toList();
     for (final element in swimmers) {
       if (bUidSet.contains(element['uid'])) {
         log('found ${element["uid"]}');
@@ -89,5 +102,11 @@ class SubscriptionCubit extends Cubit<SubscriptionStates> {
         });
       }
     }
+  }
+
+  int dropdownvalue = 0;
+  void changeDropDown(value) {
+    dropdownvalue = value;
+    emit(SubscriptionChangeDropDownState());
   }
 }
