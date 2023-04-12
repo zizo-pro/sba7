@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sba7/cubits/AppCubit/app_cubit.dart';
+import 'package:sba7/cubits/ChatCubit/chat_cubit.dart';
 import 'package:sba7/cubits/Login_Cubit/login_cubit.dart';
 import 'package:sba7/cubits/Login_Cubit/login_states.dart';
 import 'package:sba7/layout/home_layout.dart';
@@ -86,6 +87,7 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider(create: (context) => SubscriptionCubit()
                 ..getSubscription()),
+                BlocProvider(create: (context) => ChatCubit(),)
         ],
         child: BlocConsumer<LoginCubit, LoginStates>(
           listener: (context, state) {},

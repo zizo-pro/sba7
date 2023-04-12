@@ -381,6 +381,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.2"
+  get_time_ago:
+    dependency: "direct main"
+    description:
+      name: get_time_ago
+      sha256: dbd81c7f508089b72298b1f24e4e3f67d9e6416f0fc4fe84c102f173e2fe64e7
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.8"
   google_sign_in:
     dependency: "direct main"
     description:
@@ -970,6 +978,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.10.0"
+  timeago:
+    dependency: "direct main"
+    description:
+      name: timeago
+      sha256: "46c128312ab0ea144b146c0ac6426ddd96810efec2de3fccc425d00179cd8254"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.3.0"
   typed_data:
     dependency: transitive
     description:
