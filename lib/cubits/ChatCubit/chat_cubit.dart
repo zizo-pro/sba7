@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sba7/cubits/ChatCubit/chat_states.dart';
@@ -13,15 +14,21 @@ class ChatCubit extends Cubit<ChatStates> {
 
   Stream<List<MessageModel>>? messages;
   String stat = 'not';
-  Future<void> getMessages() async {
+  Future<void> getMessages(
+      {required String senderId, required String receiverId}) async {
     stat = 'not';
     messages = supabase
         .from("messages")
         .stream(primaryKey: ['messageId'])
+        .eq("senderId", senderId)
         .order('createdAt')
-        .map((maps) => maps.map((map) => MessageModel.fromJson(map)).toList());
+        .map((maps) {
+          log(maps.toString());
+          return maps.where((element) => element['receiverId'] == receiverId).map((map) => MessageModel.fromJson(map)).toList();
+        });
+    print(messages == null);
     stat = 'done';
-    emit(ChatInitState());
+    emit(GetMessagesState());
   }
 
   bool isDelayed = false;

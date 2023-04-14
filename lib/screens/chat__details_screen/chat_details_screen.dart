@@ -91,12 +91,13 @@ extension ShowSnackBar on BuildContext {
   }
 }
 
-class ChatScreen extends StatelessWidget {
-  ChatScreen({super.key});
+class ChatDetailscreen extends StatelessWidget {
+  const ChatDetailscreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    ChatCubit.get(context).getMessages();
+    ChatCubit.get(context).getMessages(
+        senderId: userData['uid'], receiverId: 'O72h0YRx5qcET5kKatWQmXt3SgZ2');
     // ChatCubit.get(context).isDelayed = false;
 
     return BlocConsumer<ChatCubit, ChatStates>(
@@ -109,9 +110,8 @@ class ChatScreen extends StatelessWidget {
                 final messages = snapshot.data;
                 // The null problem
                 return ConditionalBuilder(
-                  condition: cubit.isDelayed,
-                  fallback: (context) =>
-                      const Center(child: CircularProgressIndicator()),
+                  condition: messages != null,
+                  fallback: (context) => const CircularProgressIndicator(),
                   builder: (context) => Padding(
                     padding: const EdgeInsets.all(20),
                     child: Column(children: [

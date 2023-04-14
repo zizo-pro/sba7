@@ -10,7 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:sba7/cubits/AppCubit/app_states.dart';
 import 'package:sba7/screens/championship_screen/championship_screen.dart';
-import 'package:sba7/screens/chat_screen/chat_screen.dart';
+import 'package:sba7/screens/chats_screen/chats_screen.dart';
 import 'package:sba7/screens/profile_screen/profile_screen.dart';
 import 'package:sba7/screens/swimmers_admin_screen/swimmer_admin_screen.dart';
 import 'package:sba7/screens/train_screen/train_screen.dart';
