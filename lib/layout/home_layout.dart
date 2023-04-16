@@ -11,11 +11,11 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (userData['user_type'] != "Swimmer") {
-      AppCubit.get(context).getSwimmers();
-    } else {
-      swimmers = [];
-    }
+    // if (userData['user_type'] != "Swimmer") {
+    //   AppCubit.get(context);
+    // } else {
+    //   swimmers = [];
+    // }
     return BlocConsumer<AppCubit, AppStates>(
       listener: (context, state) {},
       builder: (context, state) {

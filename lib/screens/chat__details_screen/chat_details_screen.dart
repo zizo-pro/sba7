@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -92,117 +95,149 @@ extension ShowSnackBar on BuildContext {
 }
 
 class ChatDetailscreen extends StatelessWidget {
-  const ChatDetailscreen({super.key});
+  final swimmer;
+  const ChatDetailscreen({super.key, required this.swimmer});
 
   @override
   Widget build(BuildContext context) {
-    ChatCubit.get(context).getMessages(
-        senderId: userData['uid'], receiverId: 'O72h0YRx5qcET5kKatWQmXt3SgZ2');
+    ChatCubit.get(context)
+        .getMessages(senderId: userData['uid'], receiverId: swimmer['uid']);
     // ChatCubit.get(context).isDelayed = false;
 
-    return BlocConsumer<ChatCubit, ChatStates>(
-        listener: (context, state) {},
-        builder: (context, state) {
-          var cubit = ChatCubit.get(context);
-          return StreamBuilder<List<MessageModel>>(
-              stream: cubit.messages,
-              builder: (context, snapshot) {
-                final messages = snapshot.data;
-                // The null problem
-                return ConditionalBuilder(
-                  condition: messages != null,
-                  fallback: (context) => const CircularProgressIndicator(),
-                  builder: (context) => Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(children: [
-                      MaterialButton(
-                        onPressed: () {},
-                        color: Colors.blue,
-                      ),
-                      Expanded(
-                          child: messages!.isEmpty
-                              ? const Center(
-                                  child: Text('Start your conversation now :)'))
-                              : ListView.builder(
-                                  reverse: true,
-                                  itemCount: messages.length,
-                                  itemBuilder: (context, index) {
-                                    final message = messages[index];
-
-                                    return Text(message.content!);
-                                  },
-                                ))
-                    ]),
+    return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          children: [
+            CircleAvatar(
+                radius: 20,
+                child: ClipOval(
+                  child: SizedBox.fromSize(
+                    size: const Size.fromRadius(80),
+                    child: CachedNetworkImage(
+                      imageUrl: swimmer['profile_picture'],
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                );
-              });
-        });
-  }
-}
-
-class ChatPage extends StatefulWidget {
-  const ChatPage({Key? key}) : super(key: key);
-
-  static Route<void> route() {
-    return MaterialPageRoute(
-      builder: (context) => const ChatPage(),
+                )),
+            const SizedBox(
+              width: 10,
+            ),
+            Text(swimmer['full_name']),
+          ],
+        ),
+      ),
+      body: BlocConsumer<ChatCubit, ChatStates>(
+          listener: (context, state) {},
+          builder: (context, state) {
+            var cubit = ChatCubit.get(context);
+            return StreamBuilder<List<MessageModel>>(
+                stream: cubit.messages,
+                builder: (context, snapshot) {
+                  final messages = snapshot.data;
+                  // The null problem
+                  return ConditionalBuilder(
+                    condition: messages != null,
+                    fallback: (context) =>
+                        const Center(child: CircularProgressIndicator()),
+                    builder: (context) => Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(children: [
+                        Expanded(
+                            child: messages!.isEmpty
+                                ? const Center(
+                                    child:
+                                        Text('Start your conversation now :)'))
+                                : ListView.separated(
+                                    physics: const BouncingScrollPhysics(),
+                                    reverse: true,
+                                    itemCount: messages.length,
+                                    itemBuilder: (context, index) {
+                                      final message = messages[index];
+                                      if (message.senderId == userData['uid']) {
+                                        return buildMyMessage(message);
+                                      } else {
+                                        return buildMessage(message);
+                                      }
+                                    },
+                                    separatorBuilder:
+                                        (BuildContext context, int index) {
+                                      return const SizedBox(
+                                        height: 5,
+                                      );
+                                    },
+                                  )),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        Container(
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Colors.grey[300] as Color, width: 1),
+                              borderRadius: BorderRadius.circular(15)),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15.0),
+                                  child: TextFormField(
+                                    controller: cubit.messageController,
+                                    decoration: const InputDecoration(
+                                        border: InputBorder.none,
+                                        hintText: 'type your message here ...'),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                  height: 55,
+                                  color: Colors.blue,
+                                  child: MaterialButton(
+                                    onPressed: () {
+                                      cubit.sendMessage(
+                                          receiverId: swimmers['uid']);
+                                    },
+                                    minWidth: 1,
+                                    child: const Icon(
+                                      Icons.send,
+                                      size: 16,
+                                      color: Colors.white,
+                                    ),
+                                  ))
+                            ],
+                          ),
+                        )
+                      ]),
+                    ),
+                  );
+                });
+          }),
     );
   }
 
-  @override
-  State<ChatPage> createState() => _ChatPageState();
-}
+  Widget buildMessage(MessageModel message) => Align(
+        alignment: AlignmentDirectional.centerStart,
+        child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: const BorderRadiusDirectional.only(
+                    bottomEnd: Radius.circular(10),
+                    topEnd: Radius.circular(10),
+                    topStart: Radius.circular(10))),
+            child: Text(message.content as String)),
+      );
 
-class _ChatPageState extends State<ChatPage> {
-  late final Stream<List<MessageModel>> messagesStream;
-
-  @override
-  void initState() {
-    messagesStream = supabase
-        .from("messages")
-        .stream(primaryKey: ['senderId'])
-        .order('createdAt')
-        .map((maps) => maps.map((map) => MessageModel.fromJson(map)).toList());
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocConsumer<ChatCubit, ChatStates>(
-        listener: (context, state) {},
-        builder: (context, state) {
-          var cubit = ChatCubit.get(context);
-          return StreamBuilder<List<MessageModel>>(
-              stream: messagesStream,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  final messages = snapshot.data!;
-                  return Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(children: [
-                      MaterialButton(
-                        onPressed: () {},
-                        color: Colors.blue,
-                      ),
-                      Expanded(
-                          child: messages.isEmpty
-                              ? const Center(
-                                  child: Text('Start your conversation now :)'))
-                              : ListView.builder(
-                                  reverse: true,
-                                  itemCount: messages.length,
-                                  itemBuilder: (context, index) {
-                                    final message = messages[index];
-
-                                    return Text(message.content!);
-                                  },
-                                ))
-                    ]),
-                  );
-                } else {
-                  return CircularProgressIndicator();
-                }
-              });
-        });
-  }
+  Widget buildMyMessage(MessageModel message) => Align(
+        alignment: AlignmentDirectional.centerEnd,
+        child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            decoration: BoxDecoration(
+                color: Colors.blue.withOpacity(0.2),
+                borderRadius: const BorderRadiusDirectional.only(
+                    bottomStart: Radius.circular(10),
+                    topEnd: Radius.circular(10),
+                    topStart: Radius.circular(10))),
+            child: Text(message.content as String)),
+      );
 }

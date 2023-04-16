@@ -46,7 +46,6 @@ void main() async {
       },
     );
     if (userData['user_type'] == "Coach") {
-      
       widget = MyHomePage(userEmail: userData['email']);
     } else {
       if (userData['isAccepted'] == true) {
@@ -83,11 +82,14 @@ class MyApp extends StatelessWidget {
               ..getTraining()
               ..getUserData(email: userData['email'])
               ..init()
+              ..getSwimmers()
               ..getLocations(),
           ),
-          BlocProvider(create: (context) => SubscriptionCubit()
-                ..getSubscription()),
-                BlocProvider(create: (context) => ChatCubit(),)
+          BlocProvider(
+              create: (context) => SubscriptionCubit()..getSubscription()),
+          BlocProvider(
+            create: (context) => ChatCubit(),
+          )
         ],
         child: BlocConsumer<LoginCubit, LoginStates>(
           listener: (context, state) {},

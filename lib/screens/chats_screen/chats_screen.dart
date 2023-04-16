@@ -1,3 +1,4 @@
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sba7/cubits/ChatCubit/chat_cubit.dart';
@@ -18,16 +19,21 @@ class ChatScreen extends StatelessWidget {
           physics: const BouncingScrollPhysics(),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, index) =>
-                      userChatCard(context: context, swimmerData: swimmers[0]),
-                  itemCount: 1,
-                ),
-              ],
+            child: ConditionalBuilder(
+              condition: swimmers.isNotEmpty,
+              fallback: (context) =>
+                  const Center(child: CircularProgressIndicator()),
+              builder: (context) => Column(
+                children: [
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) => userChatCard(
+                        context: context, swimmerData: swimmers[0]),
+                    itemCount: 1,
+                  ),
+                ],
+              ),
             ),
           ),
         );

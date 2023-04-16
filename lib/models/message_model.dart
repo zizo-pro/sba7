@@ -13,7 +13,7 @@ class MessageModel {
     this.content,
   });
   MessageModel.fromJson(Map<String, dynamic>? json) {
-    senderId = json!['sender_id'];
+    senderId = json!['senderId'];
     createdAt = json['createdAt'];
     reciverId = json['reciverId'];
     messageId = json['messageId'];
